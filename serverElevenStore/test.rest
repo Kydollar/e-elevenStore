@@ -1,0 +1,103 @@
+// CREATE USER
+POST http://localhost:5000/bsi-api/bsi-api/users
+Content-Type: application/json
+
+# {
+#     "username": "admin",
+#     "name": "admin",
+#     "email": "admin@brantassecure.co.id",
+#     "password": "admin123",
+#     "confPassword": "admin123",
+#     "role": "admin"
+# }
+{
+    "username": "kydollar",
+    "name": "Rizky Widodo",
+    "email": "rizky@brantassecure.co.id",
+    "password": "kydo123",
+    "confPassword": "kydo123",
+    "role": "developer"
+}
+
+// GET ALL USER
+###
+GET http://localhost:5000/bsi-api/users
+
+
+// GET SINGLE USER
+###
+GET http://localhost:5000/bsi-api/users/d94dd4e6-b294-4123-b806-b88b8547a83a
+
+// UPDATE USER
+###
+PATCH http://localhost:5000/bsi-api/users/84e94358-2dc8-4839-8722-cb001d1f9b11
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "name": "admin",
+    "email": "admin@brantassecure.co.id",
+    "password": "admin",
+    "confPassword": "admin",
+    "role": "admin"
+}
+
+// DELETE USER
+###
+DELETE http://localhost:5000/bsi-api/users/d94dd4e6-b294-4123-b806-b88b8547a83a
+
+// LOGIN USER DEVELOPER
+###
+POST http://localhost:5000/bsi-api/login
+Content-Type: application/json
+
+{
+    "email": "rizky@brantassecure.co.id",
+    "password": "kydo123"
+}
+
+// LOGIN USER ADMIN
+###
+POST http://localhost:5000/bsi-api/login
+Content-Type: application/json
+
+{
+    "email": "admin@brantassecure.co.id",
+    "password": "admin123"
+}
+
+// LOGIN USER
+###
+POST http://localhost:5000/bsi-api/login
+Content-Type: application/json
+
+{
+    "email": "user@gmail.com",
+    "password": "user123"
+}
+
+// ME
+###
+GET http://localhost:5000/bsi-api/me
+
+
+// DELETE LOGOUT
+###
+DELETE http://localhost:5000/bsi-api/logout
+
+// GET ALL POST NEWS
+###
+GET http://localhost:5000/bsi-api/news
+
+// POST DATA POST NEWS
+###
+POST http://localhost:5000/bsi-api/news
+Content-Type: application/json
+
+{
+    "slug": "news-1 holA",
+    "name": "News 1",
+    "categories": "this category",
+    "image": "imagetest",
+    "content": "content ini"
+}

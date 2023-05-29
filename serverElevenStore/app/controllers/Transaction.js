@@ -1,0 +1,179 @@
+import moment from "moment-timezone";
+import Transaction from "../models/TransactionModel.js";
+import Products from "../models/ProductsModel.js";
+import ProductCategory from "../models/Categories/ProductCategory.js";
+import Users from "../models/UserModel.js";
+import Cart from "../models/CartModel.js";
+import PaymentMethod from "../models/PaymentMethodModel.js";
+import Address from "../models/AddressModel.js";
+
+// export const getCheckoutByUserUuid = async (req, res) => {
+// 	// try {
+// 	// 	const checkout = await Transaction.findOne({
+// 	// 		where: {
+// 	// 			userUuid: req.params.userUuid,
+// 	// 		},
+// 	// 	});
+// 	// 	if (!checkout) return res.status(404).json({ msg: "Checkout tidak ditemukan" });
+// 	// 	let response;
+// 	// 	response = await Transaction.findAll({
+// 	// 		attributes: ["uuid", "invoice", "chartUuid", "userUuid", "desc", "quantity", "subtotal"],
+// 	// 		where: {
+// 	// 			userUuid: checkout.userUuid,
+// 	// 		},
+// 	// 		include: [
+// 	// 			{
+// 	// 				model: Products,
+// 	// 				attributes: ["uuid", "nameProduct", "productCategoryUuid", "imageUrl", "stock", "price"],
+// 	// 				include: [{ model: ProductCategory, attributes: ["productCategoryName"] }],
+// 	// 			},
+// 	// 			{
+// 	// 				model: Users,
+// 	// 				attributes: ["name", "email"],
+// 	// 			},
+// 	// 		],
+// 	// 	});
+// 	// 	res.status(200).json(response);
+// 	// } catch (error) {
+// 	// 	res.status(500).json({ msg: error.message });
+// 	// }
+// };
+
+export const getCheckouts = async (req, res) => {
+	try {
+		const { invoice } = req.query;
+		const userUuid = req.params.userUuid;
+		let checkout;
+
+		if (invoice) {
+			checkout = await Transaction.findAll({
+				where: {
+					invoice: invoice,
+				},
+				include: [
+					{
+						model: Cart,
+						attributes: [
+							"uuid",
+							"invoice",
+							"productUuid",
+							"userUuid",
+							"desc",
+							"quantity",
+							"subtotal",
+						],
+						include: [{ model: Products }],
+					},
+					{
+						model: Users,
+						attributes: ["name", "email"],
+					},
+					{
+						model: PaymentMethod,
+					},
+					{
+						model: Address,
+					},
+				],
+			});
+		} else {
+			checkout = await Transaction.findAll({
+				where: {
+					userUuid: userUuid,
+				},
+				// attributes: ["uuid", "invoice", "cartUuid", "userUuid", "desc", "quantity", "subtotal"],
+				include: [
+					{
+						model: Cart,
+						attributes: [
+							"uuid",
+							"invoice",
+							"productUuid",
+							"userUuid",
+							"desc",
+							"quantity",
+							"subtotal",
+						],
+						include: [{ model: Products }],
+					},
+					{
+						model: Users,
+						attributes: ["name", "email"],
+					},
+					{
+						model: PaymentMethod,
+					},
+					{
+						model: Address,
+					},
+				],
+			});
+		}
+		if (!checkout) {
+			return res.status(404).json({ msg: "Checkout tidak ditemukan" });
+		}
+
+		res.status(200).json(checkout);
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};
+
+// export const getCheckoutByInvoice = async (req, res) => {
+// 	try {
+// 		const invoice = req.params.invoice;
+
+// 		const checkout = await Transaction.findAll({
+// 			where: {
+// 				invoice: invoice,
+// 			},
+// 			include: [
+// 				{
+// 					model: Products,
+// 					attributes: ["uuid", "nameProduct", "productCategoryUuid", "imageUrl", "stock", "price"],
+// 					include: [{ model: ProductCategory, attributes: ["productCategoryName"] }],
+// 				},
+// 				{
+// 					model: Users,
+// 					attributes: ["name", "email"],
+// 				},
+// 			],
+// 		});
+
+// 		if (!checkout) {
+// 			return res.status(404).json({ msg: "Checkout tidak ditemukan" });
+// 		}
+
+// 		res.status(200).json(checkout);
+// 	} catch (error) {
+// 		res.status(500).json({ msg: error.message });
+// 	}
+// };
+
+export const addCheckout = async (req, res) => {
+	const userUuid = req.session.userUuid;
+	const { cartUuid, addressUuid, paymentMethodUuid, ekspedisi, invoice, shippingCost, trackingId } =
+		req.body;
+
+	try {
+		const userTimezone = moment.tz.guess();
+		const currentTime = moment().tz(userTimezone);
+		const paymentLimit = currentTime.add(2, "hours");
+
+		await Transaction.create({
+			userUuid,
+			cartUuid,
+			addressUuid,
+			invoice,
+			paymentMethodUuid,
+			trackingId,
+			ekspedisi,
+			shippingCost,
+			paymentLimit: paymentLimit.toISOString(), // Simpan batas waktu pembayaran dalam format ISO
+		});
+
+		res.status(201).json({ msg: "Berhasil checkout" });
+	} catch (error) {
+		res.status(400).json({ msg: error.message });
+	}
+};
