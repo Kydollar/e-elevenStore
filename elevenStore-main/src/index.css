@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Kdam+Thmor+Pro&family=Noto+Sans+TC:wght@100;300&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+	margin: 0;
+	font-family: "Inter", sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	@apply !bg-gray-100
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+.bg-sidebar {
+	background-image: url(./assets/images/mountain.jpg);
+}
+
+.swal2-container {
+	z-index: 10000;
+}
+.swal2-backdrop-show {
+	background: rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(2px);
+}
+.confirm {
+	@apply py-2 px-6 mx-1 rounded-md text-sm inline-flex shadow-md bg-gradient-to-br from-sky-700 to-sky-500 text-white hover:scale-105 hover:translate-x-0.5 transition-all;
+}
+.cancel {
+	@apply py-2 px-6 mx-1 rounded-md text-sm inline-flex shadow-md bg-gradient-to-br from-red-500 to-red-400 text-white hover:scale-105 hover:translate-x-0.5 transition-all;
+}
+
+/* Basic editor styles */
+.parrenteditor {
+	@apply rounded-md border border-gray-300;
+}
+
+.ProseMirror {
+	min-height: 100px;
+	@apply p-4 rounded-b-md border-t border-gray-300 bg-white
+  }
+.ProseMirror:focus {
+	outline: 2px solid #1976d2;
+}
+.ProseMirror > * + * {
+	margin-top: 0.75em;
+}
+.ProseMirror ul,
+.ProseMirror ol {
+	padding: 0 1rem;
+}
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+	line-height: 1.1;
+}
+.ProseMirror code {
+	background-color: rgba(97, 97, 97, 0.1);
+	color: #616161;
+}
+.ProseMirror pre {
+	background: #0d0d0d;
+	color: #fff;
+	font-family: "JetBrainsMono", monospace;
+	padding: 0.75rem 1rem;
+	border-radius: 0.5rem;
+}
+.ProseMirror pre code {
+	color: inherit;
+	padding: 0;
+	background: none;
+	font-size: 0.8rem;
+}
+.ProseMirror img {
+	max-width: 100%;
+	height: auto;
+}
+.ProseMirror blockquote {
+	padding-left: 1rem;
+	border-left: 2px solid rgba(13, 13, 13, 0.1);
+}
+.ProseMirror hr {
+	border: none;
+	border-top: 2px solid rgba(13, 13, 13, 0.1);
+	margin: 2rem 0;
+}
