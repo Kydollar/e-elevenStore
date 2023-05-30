@@ -12,9 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { formatPhoneNumber, formatter } from "utils/useFormatter";
 import { Clear, HighlightOff } from "@mui/icons-material";
 
-import PendingImage from "../../assets/images/paid.webp"
-import PaidImage from "../../assets/images/paid.webp"
-import RejectedImage from "../../assets/images/rejected.jpg"
+import PendingImage from "../../assets/images/pending.jpg";
 
 moment.locale("id");
 
@@ -129,11 +127,21 @@ const columns = [
 			sort: false,
 			customBodyRender: (value) => {
 				if (value === null) {
-					return <div>Pending</div>;
+					return (
+						<div className="bg-yellow-500 text-white px-2 py-1 rounded-full text-center">
+							Pending
+						</div>
+					);
 				} else if (value === false) {
-					return <div>Ditolak</div>;
+					return (
+						<div className="bg-red-500 text-white px-2 py-1 rounded-full text-center">Ditolak</div>
+					);
 				} else {
-					return <div>Disetujui</div>;
+					return (
+						<div className="bg-green-500 text-white px-2 py-1 rounded-full text-center">
+							Disetujui
+						</div>
+					);
 				}
 			},
 		},
@@ -141,7 +149,6 @@ const columns = [
 ];
 
 const BillingHistory = () => {
-	const [billingHistory, setBillingHistory] = useState([]);
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [valueFile, setValueFile] = useState(null);
 	const [combinedData, setCombinedData] = useState([]);
@@ -156,9 +163,10 @@ const BillingHistory = () => {
 		if (!userUuid) return;
 		const getBillingHistory = async () => {
 			try {
-				const response = await axios.get(`${process.env.REACT_APP_MY_API}/checkout/${userUuid}`);
+				const response = await axios.get(
+					`${process.env.REACT_APP_MY_API}/checkout/${userUuid}?status=null`
+				);
 				const billingHistory = response.data;
-				setBillingHistory(billingHistory);
 				setCombinedData(
 					Object.values(
 						billingHistory.reduce((acc, primary) => {
@@ -254,6 +262,16 @@ const BillingHistory = () => {
 						},
 					},
 				},
+				MuiTableRow: {
+					styleOverrides: {
+						root: {
+							"&:hover": {
+								backgroundColor: "#f5f5f5", // Add your desired hover background color here
+								cursor: "pointer",
+							},
+						},
+					},
+				},
 			},
 		});
 
@@ -280,8 +298,6 @@ const BillingHistory = () => {
 			setClickInvoice(selectedRowChildren[1]);
 		},
 	};
-
-	// console.log(clickInvoice)
 
 	const handleFileSelect = (event) => {
 		setSelectedFile(event.target.files[0]);
@@ -335,9 +351,6 @@ const BillingHistory = () => {
 			console.error("Error in deleting file:", error);
 		}
 	};
-
-	console.log("product", lastCombinedData);
-
 	return (
 		<div className="relative">
 			<ThemeProvider theme={getMuiTheme()}>
@@ -362,7 +375,7 @@ const BillingHistory = () => {
 				className="bg-white p-6 mt-6 rounded-lg"
 				style={{ boxShadow: "0px 0px 5px 2px rgba(0,0,0,0.03)" }}
 			>
-				<h1 className="text-xl font-semibold">{lastDataBoolean && "Last"} Billing History</h1>
+				<h1 className="text-xl font-semibold">{lastDataBoolean && "New"} Billing History</h1>
 				<Divider className="pt-2" />
 				{combinedData.length > 0 ? (
 					<>
@@ -384,43 +397,19 @@ const BillingHistory = () => {
 									<p>{lastCombinedData?.address?.detailAddress}</p>
 								</div>
 							</div>
-							{/* <div className="flex flex-col gap-2">
-								{columns.map(
-									(c, i) =>
-										c.label !== "User Uuid" &&
-										c.label !== "Uuid" &&
-										c.label !== "Status" && <p key={i}>{c.label}</p>
-								)}
-							</div>
-							<div className="flex flex-col gap-2">
-								<p>:&nbsp;&nbsp;{lastCombinedData?.invoice}</p>
-								<p>
-									:&nbsp;&nbsp;
-									{lastCombinedData?.cart.map((cart) => cart.product.nameProduct).join(", ")}
-								</p>
-								<p>:&nbsp;&nbsp;{lastCombinedData?.trackingId}</p>
-								<p>
-									:&nbsp;&nbsp;
-									{lastCombinedData?.payment_method.paymentName}
-								</p>
-								<p>
-									:&nbsp;&nbsp;
-									{moment(lastCombinedData?.createdAt).format("LLLL")}
-								</p>
-								<p>
-									:&nbsp;&nbsp;
-									{moment(lastCombinedData?.paymentLimit).format("LLLL")}
-								</p>
-							</div> */}
 							<div className="grow flex justify-end">
 								<div className="text-end">
-									<img src={PendingImage} alt="payment" className="h-32 w-32" />
 									<h1 className="text-gray-400">Payment Method</h1>
 									<p>
 										{lastCombinedData?.payment_method.paymentName} (
 										{lastCombinedData?.payment_method.name})
 									</p>
 									<p>No Rekening : {lastCombinedData?.payment_method.norek}</p>
+									{lastCombinedData?.status === null && (
+										<div className="flex justify-end">
+											<img src={PendingImage} alt="payment" className="h-32 w-32" />
+										</div>
+									)}
 								</div>
 							</div>
 						</div>

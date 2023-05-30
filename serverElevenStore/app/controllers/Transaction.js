@@ -41,75 +41,51 @@ import Address from "../models/AddressModel.js";
 
 export const getCheckouts = async (req, res) => {
 	try {
-		const { invoice } = req.query;
+		const { invoice, status } = req.query;
 		const userUuid = req.params.userUuid;
-		let checkout;
+
+		let whereClause = {};
+		let includeOptions = [
+			{
+				model: Cart,
+				attributes: ["uuid", "invoice", "productUuid", "userUuid", "desc", "quantity", "subtotal"],
+				include: [{ model: Products }],
+			},
+			{
+				model: Users,
+				attributes: ["name", "email"],
+			},
+			{
+				model: PaymentMethod,
+			},
+			{
+				model: Address,
+			},
+		];
 
 		if (invoice) {
-			checkout = await Transaction.findAll({
-				where: {
-					invoice: invoice,
-				},
-				include: [
-					{
-						model: Cart,
-						attributes: [
-							"uuid",
-							"invoice",
-							"productUuid",
-							"userUuid",
-							"desc",
-							"quantity",
-							"subtotal",
-						],
-						include: [{ model: Products }],
-					},
-					{
-						model: Users,
-						attributes: ["name", "email"],
-					},
-					{
-						model: PaymentMethod,
-					},
-					{
-						model: Address,
-					},
-				],
-			});
+			whereClause.invoice = invoice;
+		} else if (status) {
+			if (status === "true") {
+				whereClause.userUuid = userUuid;
+				whereClause.status = true;
+			} else if (status === "false") {
+				whereClause.userUuid = userUuid;
+				whereClause.status = false;
+			} else {
+				whereClause.userUuid = userUuid;
+				whereClause.status = null;
+			}
 		} else {
-			checkout = await Transaction.findAll({
-				where: {
-					userUuid: userUuid,
-				},
-				// attributes: ["uuid", "invoice", "cartUuid", "userUuid", "desc", "quantity", "subtotal"],
-				include: [
-					{
-						model: Cart,
-						attributes: [
-							"uuid",
-							"invoice",
-							"productUuid",
-							"userUuid",
-							"desc",
-							"quantity",
-							"subtotal",
-						],
-						include: [{ model: Products }],
-					},
-					{
-						model: Users,
-						attributes: ["name", "email"],
-					},
-					{
-						model: PaymentMethod,
-					},
-					{
-						model: Address,
-					},
-				],
-			});
+			whereClause.userUuid = userUuid;
 		}
-		if (!checkout) {
+
+		const checkout = await Transaction.findAll({
+			where: whereClause,
+			include: includeOptions,
+		});
+
+		if (checkout.length === 0) {
 			return res.status(404).json({ msg: "Checkout tidak ditemukan" });
 		}
 
