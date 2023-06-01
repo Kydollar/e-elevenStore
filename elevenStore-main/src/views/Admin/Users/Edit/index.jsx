@@ -57,7 +57,7 @@ export default function FullWidthTabs() {
 
 	return (
 		<Box sx={{ borderRadius: "8px" }} className="bg-white shadow-md mt-2">
-			<div className="p-4 bg-gradient-to-br from-sky-700 to-sky-500 shadow-md rounded-t-lg text-white">
+			<div className="p-4 bg-gradient-to-tr from-gray-800/30 to-blue-800/50 shadow-md rounded-t-lg text-white">
 				<h1 className="font-bold">User</h1>
 				<h6 className="text-sm mt-1 opacity-60">Edit User</h6>
 			</div>

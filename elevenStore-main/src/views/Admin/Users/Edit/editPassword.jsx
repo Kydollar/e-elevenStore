@@ -51,7 +51,7 @@ export default function EditPassword() {
 				password: password,
 				confPassword: confPassword,
 			});
-			navigate("/users");
+			navigate("/admin/users");
 		} catch (error) {
 			if (error.response) {
 				setMsg(error.response.data.msg);
@@ -118,7 +118,9 @@ export default function EditPassword() {
 			<div className="mt-4">
 				<Button
 					onClick={updateUserPassword}
-					inputClassName="bg-gradient-to-br from-sky-700 to-sky-500 text-white hover:scale-105 hover:translate-x-0.5 transition-all"
+					primary
+					disabled={password === "" && true}
+					inputClassName={`${password === "" && "disabled:opacity-40 cursor-not-allowed"}`}
 				>
 					Simpan
 				</Button>

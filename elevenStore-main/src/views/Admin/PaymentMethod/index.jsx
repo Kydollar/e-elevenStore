@@ -26,8 +26,8 @@ const columns = [
 		},
 	},
 	{
-		name: "product",
-		label: "Product Item",
+		name: "paymentMethods",
+		label: "Payment Method",
 		options: {
 			filter: false,
 			sort: false,
@@ -36,11 +36,11 @@ const columns = [
 					<NavLink
 						className="flex items-center hover:bg-gray-500/10 rounded-lg p-2 gap-2"
 						to={{
-							pathname: `../products/${value?.product_category?.productCategoryName}/${value?.uuid}`,
+							pathname: `../paymentMethods/${value?.paymentMethods_category?.paymentMethodsCategoryName}/${value?.uuid}`,
 						}}
 					>
 						<img src={value?.imageUrl} alt="User" style={{ width: "50px", height: "50px" }} />
-						<p className="font-semibold">{value?.nameProduct}</p>
+						<p className="font-semibold">{value?.namePaymentMethods}</p>
 					</NavLink>
 				);
 			},
@@ -72,8 +72,8 @@ const columns = [
 	},
 ];
 
-export default function Products() {
-	const [products, setProducts] = useState([]);
+export default function PaymentMethods() {
+	const [paymentMethods, setPaymentMethods] = useState([]);
 
 	const options = {
 		selectableRowsHeader: false,
@@ -89,9 +89,9 @@ export default function Products() {
 					</Link>
 				)}
 				<button
-					onClick={() => {
-						handleDelete(displayData, selectedRows);
-					}}
+					// onClick={() => {
+					// 	handleDelete(displayData, selectedRows);
+					// }}
 					className="w-4 mx-1 transform hover:text-red-500 hover:scale-110"
 				>
 					<DeleteForeverRoundedIcon alt="Delete" fontSize={"small"} />
@@ -101,65 +101,65 @@ export default function Products() {
 	};
 
 	useEffect(() => {
-		getProducts();
+		getPaymentMethods();
 	}, []);
 
-	const getProducts = async () => {
-		const response = await axios.get(`${process.env.REACT_APP_MY_API}/product`);
-		setProducts(response.data);
+	const getPaymentMethods = async () => {
+		const response = await axios.get(`${process.env.REACT_APP_MY_API}/payment-methods`);
+		setPaymentMethods(response.data);
 	};
 
-	console.log(products);
+	console.log(paymentMethods);
 
-	const handleDelete = (displayData, selectedRows) => {
-		Swal.fire({
-			title: "Apakah anda yakin?",
-			text: "Anda tidak akan dapat mengembalikan ini!",
-			icon: "warning",
-			showCancelButton: true,
-			customClass: {
-				confirmButton: "confirm",
-				cancelButton: "cancel",
-			},
-			buttonsStyling: false,
-			confirmButtonText: "Ya, hapus!",
-		}).then((result) => {
-			if (result.isConfirmed) {
-				Swal.fire({
-					title: "Behasil dihapus!",
-					text: "Data berhasil dihapus.",
-					icon: "success",
-					customClass: {
-						confirmButton: "confirm",
-					},
-					buttonsStyling: false,
-				}).then(async () => {
-					if (selectedRows.data.length <= 1) {
-						const displayDataOnlyOne = displayData[selectedRows.data[0].index].data[0];
-						setProducts(products.filter((u) => u.uuid !== displayDataOnlyOne));
-						try {
-							await axios.delete(`${process.env.REACT_APP_MY_API}/product/${displayDataOnlyOne}`);
-							getProducts();
-						} catch (error) {
-							console.log(error);
-						}
-					} else {
-						let multiData;
-						for (let i = 0; i < selectedRows.data.length; i++) {
-							multiData = displayData[selectedRows.data[i].index].data[0];
-							setProducts(products.filter((u) => u.uuid !== multiData));
-							try {
-								await axios.delete(`${process.env.REACT_APP_MY_API}/product/${multiData}`);
-								getProducts();
-							} catch (error) {
-								console.log(error);
-							}
-						}
-					}
-				});
-			}
-		});
-	};
+	// const handleDelete = (displayData, selectedRows) => {
+	// 	Swal.fire({
+	// 		title: "Apakah anda yakin?",
+	// 		text: "Anda tidak akan dapat mengembalikan ini!",
+	// 		icon: "warning",
+	// 		showCancelButton: true,
+	// 		customClass: {
+	// 			confirmButton: "confirm",
+	// 			cancelButton: "cancel",
+	// 		},
+	// 		buttonsStyling: false,
+	// 		confirmButtonText: "Ya, hapus!",
+	// 	}).then((result) => {
+	// 		if (result.isConfirmed) {
+	// 			Swal.fire({
+	// 				title: "Behasil dihapus!",
+	// 				text: "Data berhasil dihapus.",
+	// 				icon: "success",
+	// 				customClass: {
+	// 					confirmButton: "confirm",
+	// 				},
+	// 				buttonsStyling: false,
+	// 			}).then(async () => {
+	// 				if (selectedRows.data.length <= 1) {
+	// 					const displayDataOnlyOne = displayData[selectedRows.data[0].index].data[0];
+	// 					setPaymentMethods(paymentMethods.filter((u) => u.uuid !== displayDataOnlyOne));
+	// 					try {
+	// 						await axios.delete(`${process.env.REACT_APP_MY_API}/paymentMethods/${displayDataOnlyOne}`);
+	// 						getPaymentMethods();
+	// 					} catch (error) {
+	// 						console.log(error);
+	// 					}
+	// 				} else {
+	// 					let multiData;
+	// 					for (let i = 0; i < selectedRows.data.length; i++) {
+	// 						multiData = displayData[selectedRows.data[i].index].data[0];
+	// 						setPaymentMethods(paymentMethods.filter((u) => u.uuid !== multiData));
+	// 						try {
+	// 							await axios.delete(`${process.env.REACT_APP_MY_API}/paymentMethods/${multiData}`);
+	// 							getPaymentMethods();
+	// 						} catch (error) {
+	// 							console.log(error);
+	// 						}
+	// 					}
+	// 				}
+	// 			});
+	// 		}
+	// 	});
+	// };
 
 	const getMuiTheme = () =>
 		createTheme({
@@ -189,21 +189,21 @@ export default function Products() {
 					<Button primary>
 						<div className="inline-flex align-middle">
 							<PersonAddRoundedIcon alt="Add User" fontSize={"small"} />
-							<p className="ml-2 cursor-pointer">Tambah Product</p>
+							<p className="ml-2 cursor-pointer">Tambah Payment Method</p>
 						</div>
 					</Button>
 				</Link>
 			</div>
 			<ThemeProvider theme={getMuiTheme()}>
 				<MUIDataTable
-					title={"Products"}
-					data={products.map((e) => [
-						e.uuid,
-						e,
-						e.product_category.productCategoryName,
-						e.price,
-						e.stock,
-					])}
+					title={"Payment Methods"}
+					// data={paymentMethods.map((e) => [
+					// 	e.uuid,
+					// 	e,
+					// 	e.paymentMethods_category.paymentMethodsCategoryName,
+					// 	e.price,
+					// 	e.stock,
+					// ])}
 					columns={columns}
 					options={options}
 				/>

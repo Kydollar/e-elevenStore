@@ -24,6 +24,15 @@ const schema = yup.object().shape({
 export default function EditUser() {
 	const [preview, setPreview] = useState("");
 	const [msg, setMsg] = useState("");
+	const [isFormChanged, setIsFormChanged] = useState(false);
+
+	const defaultFormValues = {
+		username: "",
+		name: "",
+		roleCategoryUuid: "",
+		email: "",
+		file: "",
+	};
 
 	const {
 		register,
@@ -34,12 +43,7 @@ export default function EditUser() {
 		formState: { errors },
 	} = useForm({
 		mode: "all",
-		defaultValues: {
-			username: "",
-			name: "",
-			roleCategoryUuid: "",
-			email: "",
-		},
+		defaultValues: defaultFormValues,
 		resolver: yupResolver(schema),
 	});
 
@@ -62,6 +66,16 @@ export default function EditUser() {
 				setValue("roleCategoryUuid", response.data.roleCategoryUuid);
 				setValue("email", response.data.email);
 				setValue("file", response.data.avatarUrl);
+
+				// Check if form values are different from default values
+				const isChanged =
+					response.data.username !== defaultFormValues.username ||
+					response.data.name !== defaultFormValues.name ||
+					response.data.roleCategoryUuid !== defaultFormValues.roleCategoryUuid ||
+					response.data.email !== defaultFormValues.email ||
+					response.data.avatarUrl !== defaultFormValues.file;
+
+				setIsFormChanged(isChanged);
 			} catch (error) {
 				if (error.response) {
 					setMsg(error.response.data.msg);
@@ -69,7 +83,7 @@ export default function EditUser() {
 			}
 		};
 		getUser();
-	}, [uuid]);
+	}, [uuid, setValue]);
 
 	const onSubmit = async (data, e) => {
 		e.preventDefault();
@@ -93,7 +107,7 @@ export default function EditUser() {
 				timerProgressBar: true,
 			}).then(function () {
 				// Redirect the user
-				navigate("/users");
+				navigate("/admin/users");
 			});
 		} catch (error) {
 			if (error.response) {
@@ -211,7 +225,9 @@ export default function EditUser() {
 			<div className="mt-4">
 				<Button
 					type="submit"
-					inputClassName="bg-gradient-to-br from-sky-700 to-sky-500 text-white hover:scale-105 hover:translate-x-0.5 transition-all"
+					primary
+					disabled={!isFormChanged} // Disable the button if form values are not changed
+					inputClassName={`${!isFormChanged && "disabled:opacity-40 cursor-not-allowed"}`}
 				>
 					Simpan
 				</Button>

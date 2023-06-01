@@ -121,7 +121,7 @@ export default function AddThird() {
 				timerProgressBar: true,
 			}).then(function () {
 				// Redirect the user
-				navigate("/users");
+				navigate("/admin/users");
 			});
 		} catch (error) {
 			if (error.response) {
