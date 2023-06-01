@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Button from "components/Button";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, reset } from "features/authSlice";
 import ProfileMenu from "./profileMenu";
 import CartMenu from "./cartMenu";
@@ -47,24 +47,10 @@ function Topbar(props) {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { user } = useSelector((state) => state.auth);
-	const location = useLocation();
 
 	React.useEffect(() => {
 		dispatch(reset());
 	}, [dispatch]);
-
-	React.useEffect(() => {
-		const searchParams = new URLSearchParams(location.search);
-		if (openModalLogin) {
-			searchParams.set("modal", "login");
-		} else {
-			searchParams.delete("modal");
-		}
-		if (!user) {
-			const newSearch = searchParams.toString();
-			navigate({ search: newSearch });
-		}
-	}, [openModalLogin, location.search, navigate]);
 
 	const isProfileMenuOpen = Boolean(anchorElProfile);
 	const isCartMenuOpen = Boolean(anchorElCart);

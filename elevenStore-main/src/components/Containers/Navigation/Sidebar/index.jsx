@@ -147,7 +147,6 @@ const Sidebar = (props) => {
 	const logout = () => {
 		dispatch(LogOut());
 		dispatch(reset());
-		navigate("/login", { replace: true });
 	};
 	return (
 		<div className="flex flex-col justify-between h-screen bg-gray-100">
