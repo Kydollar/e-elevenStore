@@ -1,10 +1,10 @@
 import React from "react";
 import Toolbar from "@mui/material/Toolbar";
 import MuiAppBar from "@mui/material/AppBar";
-import { Typography, Avatar } from "@mui/material";
+import { Typography, Avatar, InputBase } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
-import { styled } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -16,6 +16,8 @@ import CartMenu from "./cartMenu";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "components/Modal";
 import Login from "views/Auth/Login/loginSecond";
+import SearchIcon from "@mui/icons-material/Search";
+import SearchPage from "./search";
 
 const drawerWidth = 280;
 
@@ -37,12 +39,52 @@ const AppBar = styled(MuiAppBar, {
 	}),
 }));
 
+const Search = styled("div")(({ theme }) => ({
+	position: "relative",
+	borderRadius: theme.shape.borderRadius,
+	backgroundColor: alpha(theme.palette.common.white, 0.15),
+	"&:hover": {
+		backgroundColor: alpha(theme.palette.common.white, 0.25),
+	},
+	marginLeft: 0,
+	width: "100%",
+	[theme.breakpoints.up("sm")]: {
+		marginLeft: theme.spacing(1),
+		width: "auto",
+	},
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+	padding: theme.spacing(0, 2),
+	height: "100%",
+	position: "absolute",
+	pointerEvents: "none",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+	color: "inherit",
+	"& .MuiInputBase-input": {
+		padding: theme.spacing(1, 1, 1, 0),
+		// vertical padding + font size from searchIcon
+		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+		transition: theme.transitions.create("width"),
+		width: "100%",
+		[theme.breakpoints.up("sm")]: {
+			width: "16ch",
+		},
+	},
+}));
+
 function Topbar(props) {
 	const { open, handleDrawerOpen } = props;
 	const [anchorElProfile, setAnchorElProfile] = React.useState(null);
 	const [anchorElCart, setAnchorElCart] = React.useState(null);
 	const [cartLength, setCartLength] = React.useState(0);
 	const [openModalLogin, setOpenModalLogin] = React.useState(false);
+	const [openSearchModal, setOpenSearchModal] = React.useState(false);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -79,6 +121,14 @@ function Topbar(props) {
 		setOpenModalLogin(false);
 	};
 
+	const handleSearchClick = () => {
+		setOpenSearchModal(true);
+	};
+
+	const handleSearchClose = () => {
+		setOpenSearchModal(false);
+	};
+
 	const logout = () => {
 		dispatch(LogOut());
 		dispatch(reset());
@@ -110,11 +160,17 @@ function Topbar(props) {
 					>
 						<MenuIcon />
 					</IconButton>
-					{/* <Typography variant="h6" noWrap component="div">
-						{user && user.name}
-					</Typography> */}
+					<Search onClick={handleSearchClick}>
+						<SearchIconWrapper>
+							<SearchIcon />
+						</SearchIconWrapper>
+						<StyledInputBase
+							placeholder="Search products…"
+							inputProps={{ "aria-label": "search" }}
+							readOnly
+						/>
+					</Search>
 					<Box sx={{ flexGrow: 1 }} />
-
 					{user ? (
 						<>
 							<Box sx={{ display: { md: "flex" } }}>
@@ -176,6 +232,9 @@ function Topbar(props) {
 			<CustomModal open={openModalLogin} handleClose={handleCloseLogin}>
 				{/* Modal Content */}
 				<Login handleCloseLogin={handleCloseLogin} />
+			</CustomModal>
+			<CustomModal open={openSearchModal} handleClose={handleSearchClose} onTop>
+				<SearchPage handleClose={handleSearchClose} />
 			</CustomModal>
 		</>
 	);

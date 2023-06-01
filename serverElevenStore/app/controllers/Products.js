@@ -2,6 +2,52 @@ import path from "path";
 import fs from "fs";
 import Products from "../models/ProductsModel.js";
 import ProductCategory from "../models/Categories/ProductCategory.js";
+import { Op, Sequelize } from "sequelize";
+
+export const getSearch = async (req, res) => {
+	const { q } = req.query; // Get the search query from the "q" query parameter
+
+	try {
+		if (!q) {
+			// Return an empty array if the search query is empty
+			return res.status(200).json(null);
+		}
+
+		const products = await Products.findAll({
+			where: {
+				[Op.or]: [
+					// Perform case-insensitive search using LOWER() function
+					Sequelize.where(
+						Sequelize.fn("LOWER", Sequelize.col("nameProduct")),
+						"LIKE",
+						`%${q.toLowerCase()}%`
+					),
+					Sequelize.where(
+						Sequelize.fn("LOWER", Sequelize.col("desc")),
+						"LIKE",
+						`%${q.toLowerCase()}%`
+					),
+					Sequelize.literal(`nameProduct REGEXP BINARY '${q}'`), // Case-sensitive search for spaces
+				],
+			},
+			include: [
+				{
+					model: ProductCategory,
+					attributes: ["productCategoryName"],
+				},
+			],
+		});
+
+		if (products.length === 0) {
+			// Return a message if no products were found for the search query
+			return res.status(200).json({ msg: "Product yang anda cari tidak ada!" });
+		}
+
+		res.status(200).json(products);
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};
 
 export const getProducts = async (req, res) => {
 	try {

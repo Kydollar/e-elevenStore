@@ -58,8 +58,8 @@ export default function Cards(props) {
 					key={product?.uuid + index}
 					to={{
 						pathname: category
-							? `${product?.uuid}`
-							: `${product?.product_category?.productCategoryName}/${product?.uuid}`,
+							? `/products/${category.productCategoryName}/${product?.uuid}`
+							: `/products/${product?.product_category?.productCategoryName}/${product?.uuid}`,
 					}}
 				>
 					<div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow overflow-hidden">
