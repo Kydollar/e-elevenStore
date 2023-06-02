@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { formatter } from "utils/useFormatter";
 import CustomModal from "components/Modal";
-import Login from "views/Auth/Login/loginSecond";
+import Login from "views/Auth/Login";
 import axios from "axios";
 
 export default function Cards(props) {

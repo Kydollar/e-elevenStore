@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, reset } from "features/authSlice";
 import axios from "axios";
 
@@ -20,16 +20,29 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import CategoryIcon from "@mui/icons-material/Category";
 import FiberSmartRecordIcon from "@mui/icons-material/FiberSmartRecord";
-import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-const SingleLevel = ({ item, openSideBar }) => {
+const SingleLevel = ({ item, openSideBar, isActive }) => {
 	return (
 		<Link to={item?.to}>
-			<div className={`${openSideBar && "mx-2"}`}>
-				<ListItemButton sx={{ borderRadius: openSideBar && "8px" }}>
-					<ListItemIcon className={`mr-4 py-3 rounded-xl shadow-lg ${openSideBar ? "justify-center": "pl-2"}`}>{item?.icon}</ListItemIcon>
+			<div className={`${openSideBar && "mx-2 my-2"}`}>
+				<ListItemButton
+					style={{
+						borderRadius: openSideBar ? "1rem" : undefined,
+						backgroundColor: isActive ? "white" : undefined,
+						boxShadow: isActive ? "0 20px 27px 0 rgba(0,0,0,.05)" : undefined,
+					}}
+					selected={isActive}
+				>
+					<ListItemIcon
+						className={`mr-4 py-3 rounded-xl shadow-lg ${openSideBar ? "justify-center" : "pl-2"} ${
+							isActive ? "bg-gradient-to-tl from-gray-800/30 to-blue-800/50 !text-gray-100" : ""
+						}`}
+					>
+						{item?.icon}
+					</ListItemIcon>
 					<ListItemText primary={item?.title} />
 				</ListItemButton>
 			</div>
@@ -37,7 +50,7 @@ const SingleLevel = ({ item, openSideBar }) => {
 	);
 };
 
-const MultiLevel = ({ item, openSideBar }) => {
+const MultiLevel = ({ item, openSideBar, isActive }) => {
 	const { items: children } = item;
 	const [open, setOpen] = useState(false);
 
@@ -47,9 +60,23 @@ const MultiLevel = ({ item, openSideBar }) => {
 
 	return (
 		<React.Fragment>
-			<div className={`${openSideBar && "mx-2"}`}>
-				<ListItemButton sx={{ borderRadius: openSideBar && "8px" }} onClick={handleClick}>
-					<ListItemIcon className={`mr-4 py-3 rounded-xl shadow-lg ${openSideBar ? "justify-center": "pl-2"}`}>{item?.icon}</ListItemIcon>
+			<div className={`${openSideBar && "mx-2 my-2"}`}>
+				<ListItemButton
+					style={{
+						borderRadius: openSideBar ? "1rem" : undefined,
+						backgroundColor: open ? "white" : undefined,
+						boxShadow: open ? "0 20px 27px 0 rgba(0,0,0,.05)" : undefined,
+					}}
+					onClick={handleClick}
+					selected={isActive}
+				>
+					<ListItemIcon
+						className={`mr-4 py-3 rounded-xl shadow-lg ${openSideBar ? "justify-center" : "pl-2"} ${
+							open ? "bg-gradient-to-tl from-gray-800/30 to-blue-800/50 !text-gray-100" : ""
+						}`}
+					>
+						{item?.icon}
+					</ListItemIcon>
 					<ListItemText primary={item?.title} />
 					{open ? <KeyboardArrowDownRoundedIcon /> : <KeyboardArrowRightRoundedIcon />}
 				</ListItemButton>
@@ -66,8 +93,10 @@ const MultiLevel = ({ item, openSideBar }) => {
 };
 
 const MenuItem = ({ item, openSideBar }) => {
+	const location = useLocation();
+	const isActive = location.pathname === item.to;
 	const Component = hasChildren(item) ? MultiLevel : SingleLevel;
-	return <Component item={item} openSideBar={openSideBar} />;
+	return <Component item={item} openSideBar={openSideBar} isActive={isActive} />;
 };
 
 const Sidebar = (props) => {
@@ -170,8 +199,15 @@ const Sidebar = (props) => {
 				<button onClick={logout}>
 					{!open && <Divider />}
 					<div className={`${open && "mx-2 my-2"}`}>
-						<ListItemButton sx={{ borderRadius: open && "8px" }}>
-							<ListItemIcon className={`mr-4 py-3 rounded-xl shadow-lg ${open ? "justify-center": "pl-2"}`}>
+						<ListItemButton
+							style={{
+								borderRadius: open ? "1rem" : ""
+							}}
+							selected={false}
+						>
+							<ListItemIcon
+								className={`mr-4 py-3 rounded-xl shadow-lg ${open ? "justify-center" : "pl-2"}`}
+							>
 								<LogoutRoundedIcon />
 							</ListItemIcon>
 							<ListItemText primary={"Logout"} />

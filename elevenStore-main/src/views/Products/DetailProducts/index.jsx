@@ -5,14 +5,26 @@ import { formatter } from "utils/useFormatter";
 import { useSelector } from "react-redux";
 import Button from "components/Button";
 import Categories from "../Categories";
+import CustomModal from "components/Modal/index";
+import Login from "views/Auth/Login";
 
 export default function DetailProducts() {
 	const [productData, setProductData] = useState({});
 	const [disabled, setDisabled] = useState(false);
 	const [quantity, setQuantity] = useState(1);
+	const [openModalLogin, setOpenModalLogin] = useState(false);
 	const { id } = useParams();
-	const navigate = useNavigate();
+
 	const { user } = useSelector((state) => state.auth);
+	const navigate = useNavigate();
+
+	const handleOpenLogin = () => {
+		setOpenModalLogin(true);
+	};
+
+	const handleCloseLogin = () => {
+		setOpenModalLogin(false);
+	};
 
 	const totalPrice = quantity * productData.price;
 
@@ -54,7 +66,7 @@ export default function DetailProducts() {
 				}
 			}
 		} else {
-			navigate("/login");
+			handleOpenLogin();
 		}
 	};
 
@@ -133,10 +145,16 @@ export default function DetailProducts() {
 					</div>
 				</div>
 				<div>
-					<h1 className="mb-2 font-bold">Product {productData?.product_category?.productCategoryName} lainnya</h1>
-					<Categories uuidOnProduct={productData.uuid}/>
+					<h1 className="mb-2 font-bold">
+						Product {productData?.product_category?.productCategoryName} lainnya
+					</h1>
+					<Categories uuidOnProduct={productData.uuid} />
 				</div>
 			</div>
+			<CustomModal open={openModalLogin} handleClose={handleCloseLogin}>
+				{/* Modal Content */}
+				<Login handleCloseLogin={handleCloseLogin} />
+			</CustomModal>
 		</>
 	);
 }

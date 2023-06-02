@@ -1,48 +1,27 @@
-import React, { useState, useEffect } from "react";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import React, { useState, useEffect, useRef } from "react";
 import {
-	Avatar,
-	CssBaseline,
+	Button,
 	TextField,
-	FormControlLabel,
-	Checkbox,
-	Paper,
-	Box,
-	FormHelperText,
-	Typography,
-	Grid,
 	FormControl,
 	InputLabel,
+	OutlinedInput,
 	InputAdornment,
 	IconButton,
-	OutlinedInput,
+	FormHelperText,
 	Alert,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Button from "components/Button";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import CustomButton from "components/Button";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginUser, getMe, reset } from "../../../features/authSlice";
-
-function Copyright(props) {
-	return (
-		<Typography variant="body2" color="text.secondary" align="center" {...props}>
-			{"Copyright © "}
-			<Link color="inherit" href="">
-				Eleven Store
-			</Link>{" "}
-			{new Date().getFullYear()}
-			{"."}
-		</Typography>
-	);
-}
+import { useDispatch, useSelector } from "react-redux";
+import { LoginUser, getMe, reset } from "features/authSlice";
 
 const schema = yup.object().shape({
 	email: yup
@@ -61,35 +40,47 @@ const schema = yup.object().shape({
 			}
 		}),
 	password: yup.string().required("Password is required"),
-	// .min(6, "Password must be at least 6 characters"),
 });
 
-export default function SignInSide() {
+export default function LoginSecond(props) {
+	const { handleCloseLogin } = props;
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		mode: "all",
+		mode: "onChange",
 		resolver: yupResolver(schema),
+		defaultValues: {
+			email: "",
+			password: "",
+		},
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 	const handleMouseDownPassword = (event) => {
 		event.preventDefault();
 	};
+	const { user, isSuccess, message } = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { user, isError, isSuccess, isLoading, message } = useSelector((state) => state.auth);
+
+	useEffect(() => {
+		if (user || isSuccess) {
+			window.location.reload();
+		}
+		dispatch(reset());
+	}, [user, isSuccess, dispatch, navigate]);
 
 	useEffect(() => {
 		dispatch(getMe());
-		if (user || isSuccess) {
-			navigate("/");
-		}
-		dispatch(reset());
-		// console.table("user", user, isSuccess, isError, isLoading);
-	}, [user, isSuccess, dispatch, navigate]);
+	}, [dispatch]);
+
+	const emailRef = useRef(null); // Create a ref for the email TextField
+
+	useEffect(() => {
+		emailRef.current.focus(); // Set the focus on the email TextField
+	}, []);
 
 	const onAuth = (data) => {
 		const email = data.email;
@@ -98,94 +89,72 @@ export default function SignInSide() {
 	};
 
 	return (
-		<Grid container component="main" sx={{ height: "100vh" }}>
-			<CssBaseline />
-			<Grid
-				item
-				xs={false}
-				sm={4}
-				md={7}
-				sx={{
-					backgroundImage: `url(${process.env.REACT_APP_PUBLIC_URL}/mountain.jpg)`,
-					backgroundRepeat: "no-repeat",
-					backgroundColor: (t) =>
-						t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-				}}
-			/>
-			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-				<Box
-					sx={{
-						my: 8,
-						mx: 4,
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-					}}
+		<div className="p-8 bg-white w-[400px] flex flex-col gap-2 rounded-lg">
+			<div className="self-end">
+				<IconButton
+					aria-label="close"
+					onClick={handleCloseLogin}
+					className="hover:text-red-500 !p-0"
 				>
-					<Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						Sign in
-					</Typography>
-					<Box component="form" onSubmit={handleSubmit(onAuth)} sx={{ mt: 1 }}>
-						{message && <Alert severity="error">{message}</Alert>}
-						<TextField
-							{...register("email")}
-							margin="normal"
-							required
-							fullWidth
-							label="Username or Email Address"
-							autoComplete="email"
-							autoFocus
-							error={!!errors.email}
-							helperText={errors.email?.message}
-						/>
-						<FormControl variant="outlined" fullWidth margin="normal">
-							<InputLabel required error={!!errors.password} htmlFor="outlined-adornment-password">
-								Password
-							</InputLabel>
-							<OutlinedInput
-								id="outlined-adornment-password"
-								type={showPassword ? "text" : "password"}
-								endAdornment={
-									<InputAdornment position="end">
-										<IconButton
-											aria-label="toggle password visibility"
-											onClick={handleClickShowPassword}
-											onMouseDown={handleMouseDownPassword}
-											edge="end"
-										>
-											{showPassword ? <VisibilityOff /> : <Visibility />}
-										</IconButton>
-									</InputAdornment>
-								}
-								label="Password"
-								{...register("password")}
-								error={!!errors.password}
-								autoComplete="current-password"
-							/>
-							<FormHelperText error>{errors.password?.message}</FormHelperText>
-						</FormControl>
-						{/* <FormControlLabel
-							control={<Checkbox value="remember" color="primary" />}
-							label="Remember me"
-						/> */}
-						<Button type="submit" primary inputClassName="w-full justify-center">
-							Sign In
-						</Button>
-						<span className="flex items-center justify-center text-sm text-gray-500 mt-6">
-							Belum Memiliki Akun?&nbsp;
-							<Link to="/register">
-								Daftar
-							</Link>
-						</span>
-						<Copyright sx={{ mt: 5 }} />
-					</Box>
-				</Box>
-			</Grid>
-		</Grid>
+					<HighlightOffIcon />
+				</IconButton>
+			</div>
+			{message && message !== "Mohon login ke akun Anda!" && (
+				<Alert severity="error">{message}</Alert>
+			)}
+			<form className="relative w-full" onSubmit={handleSubmit(onAuth)}>
+				<h1 className="font-bold">LOGIN</h1>
+				<TextField
+					{...register("email")}
+					margin="normal"
+					fullWidth
+					label="Email or Username"
+					autoComplete="email"
+					error={!!errors.email}
+					helperText={errors.email?.message}
+					inputRef={emailRef} // Assign the ref to the email TextField
+				/>
+				<FormControl variant="outlined" fullWidth margin="normal">
+					<InputLabel error={!!errors.password} htmlFor="outlined-adornment-password">
+						Password
+					</InputLabel>
+					<OutlinedInput
+						id="outlined-adornment-password"
+						type={showPassword ? "text" : "password"}
+						endAdornment={
+							<InputAdornment position="end">
+								<IconButton
+									aria-label="toggle password visibility"
+									onClick={handleClickShowPassword}
+									onMouseDown={handleMouseDownPassword}
+									edge="end"
+								>
+									{showPassword ? <VisibilityOff /> : <Visibility />}
+								</IconButton>
+							</InputAdornment>
+						}
+						label="Password"
+						{...register("password")}
+						error={!!errors.password}
+						autoComplete="current-password"
+					/>
+					<FormHelperText error>{errors.password?.message}</FormHelperText>
+				</FormControl>
+				<span className="flex items-center justify-end text-sm text-gray-500">
+					<Link to="/lupa-password" className="hover:text-blue-600 transition-all">
+						Lupa password?
+					</Link>
+				</span>
+				<CustomButton type="submit" primary inputClassName="w-full justify-center mt-6">
+					Sign In
+				</CustomButton>
+				<span className="flex items-center justify-center text-sm text-gray-500 mt-6">
+					Belum Memiliki Akun?&nbsp;
+					<Link to="/register" className="text-gray-800 hover:text-blue-600 transition-all">
+						Daftar
+					</Link>
+				</span>
+			</form>
+		</div>
 	);
 }

@@ -15,7 +15,7 @@ import ProfileMenu from "./profileMenu";
 import CartMenu from "./cartMenu";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "components/Modal";
-import Login from "views/Auth/Login/loginSecond";
+import Login from "views/Auth/Login";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchPage from "./search";
 
