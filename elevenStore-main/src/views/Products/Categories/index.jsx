@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Cards from "components/Cards";
+import Metatags from "components/MetaTags";
 
 export default function Categories(props) {
 	const { uuidOnProduct } = props;
@@ -34,6 +35,7 @@ export default function Categories(props) {
 
 	return (
 		<div className="flex flex-wrap gap-2">
+			<Metatags category={category} />
 			<Cards products={categoryData.products} category={categoryData} />
 		</div>
 	);

@@ -31,8 +31,6 @@ export default function DetailProducts() {
 		getProduct();
 	}, [id]);
 
-	console.log(productData);
-
 	const handleCart = (product, redirect) => {
 		if (user) {
 			const apiUrl = `${process.env.REACT_APP_MY_API}/cart`;

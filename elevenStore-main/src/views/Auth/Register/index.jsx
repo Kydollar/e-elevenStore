@@ -15,15 +15,16 @@ import {
 import RegisterImage from "../../../assets/images/registerImage.webp";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomButton from "components/Button";
+import { Helmet } from "react-helmet";
 
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup.object().shape({
 	username: yup
 		.string()
 		.required("Username is required")
-        .matches(/^\S*$/, "Username cannot contain spaces")
+		.matches(/^\S*$/, "Username cannot contain spaces")
 		.test("unique-username", "This username is already registered", async (value) => {
 			try {
 				const response = await axios.get(
@@ -112,6 +113,10 @@ export default function SignUp() {
 
 	return (
 		<div className="relative w-screen h-screen bg-gradient-to-br from-gray-100 to-gray-700">
+			<Helmet>
+				<title>Register - Eleven Store</title>
+				<meta name="description" content="Register to create an account" />
+			</Helmet>
 			<img src={RegisterImage} alt="bg-form-register" className="w-full h-full object-cover" />
 			<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 				<div className="relative">

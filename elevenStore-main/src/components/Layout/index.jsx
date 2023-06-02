@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Topbar from "../Containers/Navigation/Topbar";
 import Sidebar from "../Containers/Navigation/Sidebar";
-import Logo from "../../assets/images/logo-bsi.png";
 
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
@@ -18,6 +17,7 @@ import useWindowSize from "hooks/useWindowSize";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { useDispatch } from "react-redux";
 import { getMe, reset } from "features/authSlice";
+import Metatags from "components/MetaTags";
 
 const drawerWidth = 280;
 
@@ -104,6 +104,7 @@ const Layout = () => {
 	}, []);
 	return (
 		<React.Fragment>
+			<Metatags />
 			<span className="fixed w-[40vw] h-[40vh] bg-blue-300/10 rounded-full left-[400%] top-[50%] -z-10 blur-3xl"></span>
 			<span className="fixed w-[40vw] h-[40vh] bg-blue-300/10 rounded-full left-[50%] top-[30%] -z-10 blur-3xl"></span>
 			<span className="fixed w-[40vw] h-[40vh] bg-gray-300/10 rounded-full left-[30%] top-[20%] -z-10 blur-3xl"></span>
