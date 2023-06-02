@@ -129,7 +129,7 @@ const Layout = () => {
 						  }
 				}
 			>
-				<Topbar open={open} handleDrawerOpen={handleDrawerOpen} />
+				<Topbar open={open} handleDrawerOpen={handleDrawerOpen} scrollNav={scrollNav} />
 				<CssBaseline />
 
 				<Drawer variant="permanent" open={open}>

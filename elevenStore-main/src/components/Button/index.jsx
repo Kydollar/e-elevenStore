@@ -20,7 +20,7 @@ export default function Button(props) {
 				type={type}
 				disabled={disabled}
 				className={[
-					`px-5 py-2 text-sm inline-flex relative overflow-hidden font-medium rounded-md ${
+					`px-5 py-2 text-sm inline-flex relative overflow-hidden font-medium rounded-md shadow-lg ${
 						primary && "text-gray-100 bg-gradient-to-tr from-gray-700 to-blue-800/50"
 					} ${secondary && "text-gray-600 bg-gray-100"} rounded-md shadow-inner group`,
 					inputClassName,

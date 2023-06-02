@@ -79,7 +79,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 function Topbar(props) {
-	const { open, handleDrawerOpen } = props;
+	const { open, handleDrawerOpen, scrollNav } = props;
 	const [anchorElProfile, setAnchorElProfile] = React.useState(null);
 	const [anchorElCart, setAnchorElCart] = React.useState(null);
 	const [cartLength, setCartLength] = React.useState(0);
@@ -143,6 +143,7 @@ function Topbar(props) {
 			<AppBar
 				position="fixed"
 				open={open}
+				// className={`!bg-transparent !shadow-none backdrop-blur-xl border border-gray-200 ${open && "rounded-l-xl"}`}
 				className={`!bg-transparent bg-gradient-to-tr from-gray-800/30 to-blue-800/50 !shadow-md backdrop-blur-xl ${
 					open && "rounded-l-xl"
 				}`}
@@ -160,7 +161,13 @@ function Topbar(props) {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Search onClick={handleSearchClick}>
+					<div className="text-white">Breadcrumbs / Notyet</div>
+					<Box sx={{ flexGrow: 1 }} />
+					<Search
+						onClick={handleSearchClick}
+						className="mr-4 text-gray-500 border-gray-200/50 border !bg-white/70 !rounded-lg"
+						style={{ boxShadow: "0px 0px 5px 2px rgba(0,0,0,0.03)" }}
+					>
 						<SearchIconWrapper>
 							<SearchIcon />
 						</SearchIconWrapper>
@@ -170,7 +177,6 @@ function Topbar(props) {
 							readOnly
 						/>
 					</Search>
-					<Box sx={{ flexGrow: 1 }} />
 					{user ? (
 						<>
 							<Box sx={{ display: { md: "flex" } }}>

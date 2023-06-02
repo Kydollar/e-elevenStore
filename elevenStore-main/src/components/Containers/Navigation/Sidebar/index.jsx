@@ -29,7 +29,7 @@ const SingleLevel = ({ item, openSideBar }) => {
 		<Link to={item?.to}>
 			<div className={`${openSideBar && "mx-2"}`}>
 				<ListItemButton sx={{ borderRadius: openSideBar && "8px" }}>
-					<ListItemIcon>{item?.icon}</ListItemIcon>
+					<ListItemIcon className={`mr-4 py-3 rounded-xl shadow-lg ${openSideBar ? "justify-center": "pl-2"}`}>{item?.icon}</ListItemIcon>
 					<ListItemText primary={item?.title} />
 				</ListItemButton>
 			</div>
@@ -49,7 +49,7 @@ const MultiLevel = ({ item, openSideBar }) => {
 		<React.Fragment>
 			<div className={`${openSideBar && "mx-2"}`}>
 				<ListItemButton sx={{ borderRadius: openSideBar && "8px" }} onClick={handleClick}>
-					<ListItemIcon>{item?.icon}</ListItemIcon>
+					<ListItemIcon className={`mr-4 py-3 rounded-xl shadow-lg ${openSideBar ? "justify-center": "pl-2"}`}>{item?.icon}</ListItemIcon>
 					<ListItemText primary={item?.title} />
 					{open ? <KeyboardArrowDownRoundedIcon /> : <KeyboardArrowRightRoundedIcon />}
 				</ListItemButton>
@@ -171,7 +171,7 @@ const Sidebar = (props) => {
 					{!open && <Divider />}
 					<div className={`${open && "mx-2 my-2"}`}>
 						<ListItemButton sx={{ borderRadius: open && "8px" }}>
-							<ListItemIcon>
+							<ListItemIcon className={`mr-4 py-3 rounded-xl shadow-lg ${open ? "justify-center": "pl-2"}`}>
 								<LogoutRoundedIcon />
 							</ListItemIcon>
 							<ListItemText primary={"Logout"} />

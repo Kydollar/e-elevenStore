@@ -62,7 +62,7 @@ export default function Cards(props) {
 							: `/products/${product?.product_category?.productCategoryName}/${product?.uuid}`,
 					}}
 				>
-					<div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow overflow-hidden">
+					<div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
 						<div className="mb-4">
 							<img
 								className="w-[300px] h-[300px] object-cover object-center bg-white"

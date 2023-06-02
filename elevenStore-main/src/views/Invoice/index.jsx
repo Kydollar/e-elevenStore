@@ -129,17 +129,21 @@ const columns = [
 			customBodyRender: (value) => {
 				if (value === null) {
 					return (
-						<div className="bg-yellow-500 text-white px-2 py-1 rounded-full text-center">
+						<span className="bg-gradient-to-tl from-yellow-600 to-amber-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
 							Pending
-						</div>
+						</span>
 					);
 				} else if (value === false) {
 					return (
-						<div className="bg-red-500 text-white px-2 py-1 rounded-full text-center">Rejected</div>
+						<div className="bg-gradient-to-tl from-red-600 to-rose-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+							Rejected
+						</div>
 					);
 				} else {
 					return (
-						<div className="bg-green-500 text-white px-2 py-1 rounded-full text-center">Paid</div>
+						<div className="bg-gradient-to-tl from-green-600 to-lime-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+							Paid
+						</div>
 					);
 				}
 			},
