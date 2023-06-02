@@ -48,7 +48,6 @@ export default function DetailProducts() {
 				if (redirect) {
 					navigate("/cart");
 				}
-				console.log(product.uuid);
 			} catch (error) {
 				if (error.response) {
 					console.log(error.response);

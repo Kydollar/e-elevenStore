@@ -91,17 +91,31 @@ export const addCart = async (req, res) => {
 		});
 
 		if (existingCart) {
-			// Jika produk sudah ada dalam keranjang, update quantity
-			const updatedQuantity = existingCart.quantity + parseInt(quantity);
-			const updatedSubtotal = existingCart.subtotal + parseInt(subtotal);
+			// Check the status of the existing cart
+			if (existingCart.statusActive === true && existingCart) {
+				// If the cart is not active, update quantity and subtotal
+				const updatedQuantity = existingCart.quantity + parseInt(quantity);
+				const updatedSubtotal = existingCart.subtotal + parseInt(subtotal);
 
-			// Update quantity dan subtotal pada cart yang sudah ada
-			await existingCart.update({
-				quantity: updatedQuantity,
-				subtotal: updatedSubtotal,
-			});
+				await existingCart.update({
+					quantity: updatedQuantity,
+					subtotal: updatedSubtotal,
+				});
 
-			return res.status(200).json({ msg: "Quantity produk berhasil diupdate di keranjang" });
+				return res.status(200).json({ msg: "Quantity produk berhasil diupdate di keranjang" });
+			} else {
+				// If the cart is active, create a new cart instead
+				await Cart.create({
+					userUuid: req.session.userUuid,
+					invoice: "INV-" + generateUniqueRandomNumber() + Date.now(),
+					productUuid: productUuid,
+					desc: desc,
+					quantity: quantity,
+					subtotal: subtotal,
+				});
+
+				return res.status(201).json({ msg: "Item berhasil ditambahkan ke keranjang" });
+			}
 		}
 
 		// Jika produk belum ada dalam keranjang, tambahkan sebagai item baru

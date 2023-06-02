@@ -165,7 +165,7 @@ const Invoice = () => {
 		const getBillingHistory = async () => {
 			try {
 				const trueResponse = await axios.get(
-					`${process.env.REACT_APP_MY_API}/checkout/${userUuid}`,
+					`${process.env.REACT_APP_MY_API}/checkout/${userUuid}?status=true`,
 					{
 						params: {
 							status: true,
@@ -174,7 +174,7 @@ const Invoice = () => {
 				);
 
 				const falseResponse = await axios.get(
-					`${process.env.REACT_APP_MY_API}/checkout/${userUuid}`,
+					`${process.env.REACT_APP_MY_API}/checkout/${userUuid}?status=false`,
 					{
 						params: {
 							status: false,

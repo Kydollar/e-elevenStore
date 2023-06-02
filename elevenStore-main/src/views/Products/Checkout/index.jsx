@@ -205,10 +205,11 @@ export default function Checkout() {
 											confirmButtonText: "Billing History",
 										}).then((result) => {
 											// Update the cart status to false (inactive)
-											const cartUuid = dc.uuid; // Assuming dc is the current cart item
-											const updateCartUrl = `${process.env.REACT_APP_MY_API}/cart/${cartUuid}`;
-
-											axios.put(updateCartUrl, { statusActive: false });
+											Object.values(data.cart).forEach((dc) => {
+												const cartUuid = dc.uuid; // Assuming dc is the current cart item
+												const updateCartUrl = `${process.env.REACT_APP_MY_API}/cart/${cartUuid}`;
+												axios.put(updateCartUrl, { statusActive: false });
+											});
 											if (result.dismiss === Swal.DismissReason.cancel) {
 												// User clicked "Lanjut Belanja"
 												navigate("/products");
