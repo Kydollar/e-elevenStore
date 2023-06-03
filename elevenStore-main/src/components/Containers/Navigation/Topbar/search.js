@@ -109,6 +109,19 @@ const SearchPage = ({ onSearch, handleClose }) => {
 		inputRef.current.focus();
 	}, []);
 
+	const handleSearchItemClick = (search) => {
+		setSearchText(search.nameProduct);
+		updateRecentSearches(search); // Update recent searches state
+		performSearch();
+	};
+
+	const deleteRecentSearch = (nameProduct) => {
+		setRecentSearches((prevSearches) => {
+			const updatedSearches = prevSearches.filter((search) => search.nameProduct !== nameProduct);
+			localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+			return updatedSearches;
+		});
+	};
 	return (
 		<div className="fixed bg-white rounded-md shadow-md flex flex-col md:w-[50vw] w-[96vw] -translate-x-1/2 p-2">
 			<div className="flex mb-2">
@@ -148,7 +161,10 @@ const SearchPage = ({ onSearch, handleClose }) => {
 							<Link
 								to={`/products/${product?.product_category.productCategoryName}/${product?.uuid}`}
 								key={product?.uuid}
-								onClick={handleClose}
+								onClick={() => {
+									handleSearchItemClick(product);
+									handleClose();
+								}} // Call handleSearchItemClick with the product object
 								className="bg-white p-2 flex gap-4 cursor-pointer justify-start items-center hover:bg-gray-100"
 							>
 								<img
@@ -160,28 +176,43 @@ const SearchPage = ({ onSearch, handleClose }) => {
 							</Link>
 						))}
 				</>
+			) : recentSearches.length !== 0 ? (
+				<>
+					<div className="bg-white p-2">
+						<h2 className="text-gray-600 mb-2">Pencarian product terakhir:</h2>
+						{recentSearches.map((search, index) => (
+							<button
+								key={index}
+								className="inline-flex items-center gap-4 bg-gray-100 rounded-md px-2 py-1 mr-2 mb-2 text-sm hover:bg-gray-200"
+								onClick={() => {
+									setSearchText(search.nameProduct);
+									handleSearchItemClick(search); // Call handleSearchItemClick with the search object
+								}}
+							>
+								<div className="flex items-center">
+									<img
+										src={search.imageUrl}
+										alt={search.nameProduct}
+										className="w-8 h-8 object-cover rounded-full mr-2"
+									/>
+									<p className="cursor-pointer">{search.nameProduct}</p>
+								</div>
+								<span
+									onClick={(e) => {
+										e.stopPropagation();
+										deleteRecentSearch(search.nameProduct); // Call deleteRecentSearch with the search nameProduct
+									}}
+									className="hover:bg-red-400/50 hover:text-white px-2 py-0.5 rounded-full hover:shadow-lg"
+								>
+									X
+								</span>
+							</button>
+						))}
+					</div>
+				</>
 			) : (
-				<div className="bg-white p-2">
-					<h2 className="text-gray-600 mb-2">Terakhir yang anda cari:</h2>
-					{recentSearches.map((search, index) => (
-						<button
-							key={index}
-							className="bg-gray-100 rounded-md px-2 py-1 mr-2 mb-2 text-sm hover:bg-gray-200"
-							onClick={() => {
-								setSearchText(search.nameProduct);
-								performSearch();
-							}}
-						>
-							<div className="flex items-center">
-								<img
-									src={search.imageUrl}
-									alt={search.nameProduct}
-									className="w-8 h-8 object-cover rounded-full mr-2"
-								/>
-								<p>{search.nameProduct}</p>
-							</div>
-						</button>
-					))}
+				<div className="p-20 text-gray-500 flex items-center justify-center">
+					Tidak ada pencarian product terbaru
 				</div>
 			)}
 		</div>

@@ -6,6 +6,7 @@ import { formatter } from "utils/useFormatter";
 import CustomModal from "components/Modal";
 import Login from "views/Auth/Login";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function Cards(props) {
 	const { products, category } = props;
@@ -32,14 +33,31 @@ export default function Cards(props) {
 				formData.append("desc", "mock desc");
 				formData.append("quantity", 1);
 				formData.append("subtotal", product.price);
-				axios.post(apiUrl, formData, {
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
-				});
-				if (redirect) {
-					navigate("/cart");
-				}
+
+				axios
+					.post(apiUrl, formData, {
+						headers: {
+							"Content-Type": "multipart/form-data",
+						},
+					})
+					.then(() => {
+						Swal.fire({
+							title: "Berhasil",
+							text: "Product berhasil dimasukkan kekeranjang!",
+							icon: "success",
+							backdrop: "backdrop-filter backdrop-blur-lg",
+							showCancelButton: true,
+							cancelButtonText: "Lanjut Belanja",
+							confirmButtonText: "Lihat Keranjang",
+						}).then((result) => {
+							if (result.dismiss === Swal.DismissReason.cancel) {
+								// window.location.reload();
+							} else if (result.isConfirmed) {
+								// User clicked "Billing History"
+								navigate("/cart", { replace: false });
+							}
+						});
+					});
 			} catch (error) {
 				if (error.response) {
 					console.log(error.response);
