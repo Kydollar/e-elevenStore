@@ -82,53 +82,39 @@ export const addCart = async (req, res) => {
 	};
 
 	try {
-		// Cek apakah produk sudah ada dalam keranjang
+		// Check if the product exists in the cart and is not checked out
 		const existingCart = await Cart.findOne({
 			where: {
 				userUuid: req.session.userUuid,
 				productUuid: productUuid,
+				statusActive: true, // Only consider carts that are not checked out
 			},
 		});
 
 		if (existingCart) {
-			// Check the status of the existing cart
-			if (existingCart.statusActive === true && existingCart) {
-				// If the cart is not active, update quantity and subtotal
-				const updatedQuantity = existingCart.quantity + parseInt(quantity);
-				const updatedSubtotal = existingCart.subtotal + parseInt(subtotal);
+			// If the cart exists, update its quantity and subtotal
+			const updatedQuantity = existingCart.quantity + parseInt(quantity);
+			const updatedSubtotal = existingCart.subtotal + parseInt(subtotal);
 
-				await existingCart.update({
-					quantity: updatedQuantity,
-					subtotal: updatedSubtotal,
-				});
+			await existingCart.update({
+				quantity: updatedQuantity,
+				subtotal: updatedSubtotal,
+			});
 
-				return res.status(200).json({ msg: "Quantity produk berhasil diupdate di keranjang" });
-			} else {
-				// If the cart is active, create a new cart instead
-				await Cart.create({
-					userUuid: req.session.userUuid,
-					invoice: "INV-" + generateUniqueRandomNumber() + Date.now(),
-					productUuid: productUuid,
-					desc: desc,
-					quantity: quantity,
-					subtotal: subtotal,
-				});
+			res.status(200).json({ msg: "Quantity produk berhasil diupdate di keranjang" });
+		} else {
+			// If the product is not in the cart or has been checked out, create a new cart item
+			await Cart.create({
+				userUuid: req.session.userUuid,
+				invoice: "INV-" + generateUniqueRandomNumber() + Date.now(),
+				productUuid: productUuid,
+				desc: desc,
+				quantity: quantity,
+				subtotal: subtotal,
+			});
 
-				return res.status(201).json({ msg: "Item berhasil ditambahkan ke keranjang" });
-			}
+			res.status(201).json({ msg: "Item berhasil ditambahkan ke keranjang" });
 		}
-
-		// Jika produk belum ada dalam keranjang, tambahkan sebagai item baru
-		await Cart.create({
-			userUuid: req.session.userUuid,
-			invoice: "INV-" + generateUniqueRandomNumber() + Date.now(),
-			productUuid: productUuid,
-			desc: desc,
-			quantity: quantity,
-			subtotal: subtotal,
-		});
-
-		res.status(201).json({ msg: "Item berhasil ditambahkan ke keranjang" });
 	} catch (error) {
 		res.status(400).json({ msg: error.message });
 	}
