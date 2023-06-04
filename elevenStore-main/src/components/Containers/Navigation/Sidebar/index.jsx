@@ -183,6 +183,9 @@ const Sidebar = (props) => {
 				{menuPublic?.map((item, key) => (
 					<MenuItem key={key} item={item} openSideBar={open} />
 				))}
+				{categoryData?.map((item, key) => (
+					<MenuItem key={key} item={item} openSideBar={open} />
+				))}
 				{user?.role_category?.roleName === "admin" ? (
 					<>
 						{open && (
@@ -195,13 +198,18 @@ const Sidebar = (props) => {
 						))}
 					</>
 				) : (
-					<>
-						{categoryData?.map((item, key) => (
-							<MenuItem key={key} item={item} openSideBar={open} />
-						))}
-						{user?.role_category?.roleName === "user" &&
-							menuUser?.map((item, key) => <MenuItem key={key} item={item} openSideBar={open} />)}
-					</>
+					user?.role_category?.roleName === "user" && (
+						<>
+							{open && (
+								<div className="mx-7 mt-10">
+									<p className="text-sm text-gray-400">MAIN MENU</p>
+								</div>
+							)}
+							{menuUser?.map((item, key) => (
+								<MenuItem key={key} item={item} openSideBar={open} />
+							))}
+						</>
+					)
 				)}
 			</List>
 			{user ? (
