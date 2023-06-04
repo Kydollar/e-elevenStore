@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Button from "components/Button";
+import { Avatar } from "@mui/material";
+import ImageAvatarDummy from "../../../assets/images/avatar.png"
 import axios from "axios";
 
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
@@ -53,16 +55,10 @@ const columns = [
 			sort: false,
 			customBodyRender: (value) => {
 				return (
-					<img
-						src={value}
-						alt="User"
-						style={{
-							width: "50px",
-							height: "50px",
-							backgroundSize: "cover",
-							borderRadius: "50%",
-						}}
-						className="rounded-full bg-center"
+					<Avatar
+						alt="Avatar"
+						src={`${value || ImageAvatarDummy}`}
+						sx={{ width: 42, height: 42 }}
 					/>
 				);
 			},
