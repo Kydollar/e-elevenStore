@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -8,9 +8,12 @@ export default function ProtectedRoute(props) {
 	const navigate = useNavigate();
 	const { isError, isLoading } = useSelector((state) => state.auth);
 	const { user } = useSelector((state) => state.auth);
+	const [isUserRoleLoaded, setIsUserRoleLoaded] = useState(false);
 	const userRole = user?.role_category?.roleName;
 
 	useEffect(() => {
+		let timeoutId;
+
 		if (isError) {
 			Swal.fire({
 				icon: "error",
@@ -22,6 +25,9 @@ export default function ProtectedRoute(props) {
 			}).then(() => {
 				navigate("/");
 			});
+		} else if (!isUserRoleLoaded) {
+			// User role is not loaded yet, show loading state
+			return;
 		} else if (role === "admin" && userRole !== "admin") {
 			Swal.fire({
 				icon: "error",
@@ -45,9 +51,17 @@ export default function ProtectedRoute(props) {
 				navigate("/");
 			});
 		}
-	}, []);
 
-	if (isLoading) {
+		return () => clearTimeout(timeoutId);
+	}, [role, userRole, isError, navigate, isUserRoleLoaded]);
+
+	useEffect(() => {
+		if (userRole) {
+			setIsUserRoleLoaded(true);
+		}
+	}, [userRole]);
+
+	if (!isUserRoleLoaded || isLoading) {
 		return <div>Loading...</div>;
 	}
 
