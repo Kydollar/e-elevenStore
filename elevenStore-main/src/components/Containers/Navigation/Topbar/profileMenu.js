@@ -35,20 +35,26 @@ function ProfileMenu(props) {
 			<Link to={`user/account/profile`}>
 				<MenuItem onClick={handleProfileMenuClose}>
 					<div className="flex gap-4 items-center">
-						<Avatar src={user?.avatarUrl} alt={`${user?.name} Avatar`} sx={{ width: 32, height: 32 }} />
+						<Avatar
+							src={user?.avatarUrl}
+							alt={`${user?.name} Avatar`}
+							sx={{ width: 32, height: 32 }}
+						/>
 						<h1 className="cursor-pointer">{user?.name}</h1>
 					</div>
 				</MenuItem>
 			</Link>
 			<Divider></Divider>
 			<div className="mt-2">
-				<Link to={`user/account/profile`}>
-					<MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
-				</Link>
 				{user?.role_category?.roleName !== "admin" && (
-					<Link to={`user/account/address`}>
-						<MenuItem onClick={handleProfileMenuClose}>Alamat Saya</MenuItem>
-					</Link>
+					<>
+						<Link to={`user/account/profile`}>
+							<MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
+						</Link>
+						<Link to={`user/account/address`}>
+							<MenuItem onClick={handleProfileMenuClose}>Alamat Saya</MenuItem>
+						</Link>
+					</>
 				)}
 				<MenuItem onClick={logout}>Log Out</MenuItem>
 			</div>

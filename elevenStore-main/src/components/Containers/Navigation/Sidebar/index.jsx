@@ -180,13 +180,22 @@ const Sidebar = (props) => {
 	return (
 		<div className="flex flex-col justify-between h-screen bg-gray-100">
 			<List>
+				{menuPublic?.map((item, key) => (
+					<MenuItem key={key} item={item} openSideBar={open} />
+				))}
 				{user?.role_category?.roleName === "admin" ? (
-					menuAdmin.map((item, key) => <MenuItem key={key} item={item} openSideBar={open} />)
-				) : (
 					<>
-						{menuPublic?.map((item, key) => (
+						{open && (
+							<div className="mx-7 mt-10">
+								<p className="text-sm text-gray-400">MAIN MENU</p>
+							</div>
+						)}
+						{menuAdmin.map((item, key) => (
 							<MenuItem key={key} item={item} openSideBar={open} />
 						))}
+					</>
+				) : (
+					<>
 						{categoryData?.map((item, key) => (
 							<MenuItem key={key} item={item} openSideBar={open} />
 						))}
@@ -201,7 +210,7 @@ const Sidebar = (props) => {
 					<div className={`${open && "mx-2 my-2"}`}>
 						<ListItemButton
 							style={{
-								borderRadius: open ? "1rem" : ""
+								borderRadius: open ? "1rem" : "",
 							}}
 							selected={false}
 						>

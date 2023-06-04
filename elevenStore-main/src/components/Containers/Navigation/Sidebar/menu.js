@@ -1,5 +1,4 @@
 import React from "react";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LocalLibraryOutlinedIcon from "@mui/icons-material/LocalLibraryOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import PeopleOutlineRoundedIcon from "@mui/icons-material/PeopleOutlineRounded";
@@ -7,12 +6,6 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import CategoryIcon from '@mui/icons-material/Category';
 
 export const menuAdmin = [
-	{
-		icon: <HomeOutlinedIcon />,
-		title: "Dashboard",
-		to: "/",
-		items: [],
-	},
 	{
 		icon: <LocalLibraryOutlinedIcon />,
 		title: "Data Master",
