@@ -25,6 +25,7 @@ code {
 }
 .swal2-backdrop-show {
 	background: rgba(0, 0, 0, 0.4);
+	transition: 0.1s filter;
 	backdrop-filter: blur(2px);
 }
 .confirm {

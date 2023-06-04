@@ -31,139 +31,139 @@ import BillingHistory from "views/BillingHistory";
 import Invoice from "views/Invoice";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route
-            path="/user/account"
-            element={
-              <ProtectedRoute>
-                <Account />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="profile" element={<Profile />} />
-            <Route path="address" element={<Address />} />
-            <Route path="address/add-address" element={<AddressAdd />} />
-            <Route path="address/:addressId" element={<EditAddress />} />
-          </Route>
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:category" element={<Categories />} />
-          <Route path="/products/:category/:id" element={<DetailProducts />} />
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute>
-                <Cart />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/billing-history"
-            element={
-              <ProtectedRoute>
-                <BillingHistory />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/invoice"
-            element={
-              <ProtectedRoute>
-                <Invoice />
-              </ProtectedRoute>
-            }
-          />
+	return (
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<Layout />}>
+					<Route index element={<Dashboard />} />
+					<Route
+						path="/user/account"
+						element={
+							<ProtectedRoute role="user">
+								<Account />
+							</ProtectedRoute>
+						}
+					>
+						<Route path="profile" element={<Profile />} />
+						<Route path="address" element={<Address />} />
+						<Route path="address/add-address" element={<AddressAdd />} />
+						<Route path="address/:addressId" element={<EditAddress />} />
+					</Route>
+					<Route path="/products" element={<Products />} />
+					<Route path="/products/:category" element={<Categories />} />
+					<Route path="/products/:category/:id" element={<DetailProducts />} />
+					<Route
+						path="/cart"
+						element={
+							<ProtectedRoute role="user">
+								<Cart />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/checkout"
+						element={
+							<ProtectedRoute role="user">
+								<Checkout />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/billing-history"
+						element={
+							<ProtectedRoute role="user">
+								<BillingHistory />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/invoice"
+						element={
+							<ProtectedRoute>
+								<Invoice />
+							</ProtectedRoute>
+						}
+					/>
 
-          {/* ADMIN */}
-          <Route
-            path="/admin/users"
-            element={
-              <ProtectedRoute admin>
-                <AdminUsers />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/users/add"
-            element={
-              <ProtectedRoute admin>
-                <AdminAddUser />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/users/edit/:uuid"
-            element={
-              <ProtectedRoute admin>
-                <AdminEditUser />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/products"
-            element={
-              <ProtectedRoute admin>
-                <AdminProducts />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/products/add"
-            element={
-              <ProtectedRoute admin>
-                <AdminAddProduct />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/products/:uuid"
-            element={
-              <ProtectedRoute admin>
-                <AdminEditProduct />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/payment-method"
-            element={
-              <ProtectedRoute admin>
-                <AdminPaymentMethod />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/payment-method/add"
-            element={
-              <ProtectedRoute admin>
-                <AdminAddPaymentMethod />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/payment-method/:uuid"
-            element={
-              <ProtectedRoute admin>
-                <AdminEditPaymentMethod />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </BrowserRouter>
-  );
+					{/* ADMIN */}
+					<Route
+						path="/admin/users"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminUsers />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/users/add"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminAddUser />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/users/edit/:uuid"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminEditUser />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/products"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminProducts />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/products/add"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminAddProduct />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/products/:uuid"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminEditProduct />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/payment-method"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminPaymentMethod />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/payment-method/add"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminAddPaymentMethod />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/payment-method/:uuid"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminEditPaymentMethod />
+							</ProtectedRoute>
+						}
+					/>
+				</Route>
+				<Route path="/login" element={<Login />} />
+				<Route path="/register" element={<Register />} />
+			</Routes>
+		</BrowserRouter>
+	);
 }
 
 export default App;
