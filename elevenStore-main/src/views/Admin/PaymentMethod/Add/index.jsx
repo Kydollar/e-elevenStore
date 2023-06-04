@@ -56,7 +56,7 @@ export default function FullWidthTabs() {
       </div>
       <AppBar position="static" className="rounded-t-lg font-bold !bg-transparent !border !shadow-md">
         <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="full width tabs example">
-          <Tab label="Formulir" {...a11yProps(0)} />
+          <Tab label="Form" {...a11yProps(0)} />
         </Tabs>
       </AppBar>
       <SwipeableViews axis={theme.direction === "rtl" ? "x-reverse" : "x"} index={value} onChangeIndex={handleChangeIndex}>

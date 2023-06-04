@@ -98,18 +98,19 @@ export default function AddProducts() {
 				navigate("/admin/products");
 			});
 		} catch (error) {
-			console.log(error);
-			Swal.fire({
-				title: "Error",
-				text: `An error occurred while saving the product. ${error.response.data.msg}`,
-				icon: "error",
-				confirmButtonText: "OK",
-				allowOutsideClick: false,
-				customClass: {
-					confirmButton: "confirm",
-				},
-				buttonsStyling: false,
-			});
+			if (error.response) {
+				Swal.fire({
+					title: "Error",
+					text: `An error occurred while saving the product. ${error.response.data.msg}`,
+					icon: "error",
+					confirmButtonText: "OK",
+					allowOutsideClick: false,
+					customClass: {
+						confirmButton: "confirm",
+					},
+					buttonsStyling: false,
+				});
+			}
 		}
 	};
 

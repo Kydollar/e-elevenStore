@@ -70,7 +70,7 @@ export default function FullWidthTabs() {
 					variant="fullWidth"
 					aria-label="full width tabs example"
 				>
-					<Tab label="Product" {...a11yProps(0)} />
+					<Tab label="Form" {...a11yProps(0)} />
 				</Tabs>
 			</AppBar>
 			<SwipeableViews

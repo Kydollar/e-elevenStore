@@ -108,7 +108,7 @@ export default function CategoriesProduct() {
 						setCategoriesProduct(categoriesProduct.filter((u) => u.uuid !== displayDataOnlyOne));
 						try {
 							await axios.delete(
-								`${process.env.REACT_APP_MY_API}/categories-product/${displayDataOnlyOne}`
+								`${process.env.REACT_APP_MY_API}/product-categories/${displayDataOnlyOne}`
 							);
 							getCategoriesProduct();
 						} catch (error) {
@@ -121,7 +121,7 @@ export default function CategoriesProduct() {
 							setCategoriesProduct(categoriesProduct.filter((u) => u.uuid !== multiData));
 							try {
 								await axios.delete(
-									`${process.env.REACT_APP_MY_API}/categories-product/${multiData}`
+									`${process.env.REACT_APP_MY_API}/product-categories/${multiData}`
 								);
 								getCategoriesProduct();
 							} catch (error) {

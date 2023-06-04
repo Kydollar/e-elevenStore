@@ -54,3 +54,52 @@ export const createProductCategory = async (req, res) => {
 		res.status(400).json({ msg: error.message });
 	}
 };
+
+export const updateProductCategory = async (req, res) => {
+	const { productCategoryName, description } = req.body;
+	const { uuid } = req.params;
+
+	try {
+		const existingCategory = await ProductCategory.findOne({
+			where: { uuid: uuid },
+		});
+
+		if (!existingCategory) {
+			return res.status(404).json({ msg: "Product category not found for the provided UUID" });
+		}
+
+		await ProductCategory.update(
+			{
+				productCategoryName: productCategoryName,
+				description: description,
+			},
+			{ where: { uuid: uuid } }
+		);
+
+		res.status(200).json({ msg: "Product category updated successfully" });
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};
+
+export const deleteProductCategory = async (req, res) => {
+	const { uuid } = req.params;
+
+	try {
+		const existingCategory = await ProductCategory.findOne({
+			where: { uuid: uuid },
+		});
+
+		if (!existingCategory) {
+			return res.status(404).json({ msg: "Product category not found for the provided UUID" });
+		}
+
+		await ProductCategory.destroy({
+			where: { uuid: uuid },
+		});
+
+		res.status(200).json({ msg: "Product category deleted successfully" });
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};

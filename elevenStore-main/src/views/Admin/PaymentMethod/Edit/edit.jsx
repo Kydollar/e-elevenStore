@@ -53,7 +53,7 @@ export default function EditPaymentMethod() {
 	}, [uuid, setValue]);
 
 	const onSubmit = async (data) => {
-        console.log(data)
+		console.log(data);
 		try {
 			await axios.put(`${process.env.REACT_APP_MY_API}/payment-methods/${uuid}`, data);
 			Swal.fire({
@@ -74,6 +74,17 @@ export default function EditPaymentMethod() {
 		} catch (error) {
 			if (error.response) {
 				setMsg(error.response.data.message);
+				Swal.fire({
+					title: "Error",
+					text: `An error occurred while edit the payment. ${error.response.data.msg}`,
+					icon: "error",
+					confirmButtonText: "OK",
+					allowOutsideClick: false,
+					customClass: {
+						confirmButton: "confirm",
+					},
+					buttonsStyling: false,
+				});
 			}
 		}
 	};
