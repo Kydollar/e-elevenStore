@@ -83,7 +83,7 @@ export const getProductById = async (req, res) => {
 	try {
 		const postProduct = await Products.findOne({
 			where: {
-				uuid: req.params.id,
+				uuid: req.params.uuid,
 			},
 		});
 		if (!postProduct) return res.status(404).json({ msg: "Data tidak ditemukan" });
@@ -161,6 +161,94 @@ export const createProduct = async (req, res) => {
 	}
 };
 
-export const updateProduct = async (req, res) => {};
+export const updateProduct = async (req, res) => {
+	const { uuid } = req.params;
+	const { nameProduct, slug, desc, productCategoryUuid, stock, price } = req.body;
 
-export const deleteProduct = async (req, res) => {};
+	// Check if the product exists
+	const product = await Products.findOne({ where: { uuid } });
+
+	if (!product) {
+		return res.status(404).json({ msg: "Product not found" });
+	}
+
+	let fileName = "";
+
+	if (req.files === null) {
+		fileName = product.image;
+	} else {
+		const file = req.files.file;
+
+		if (!file || file.size === 0) {
+			return res.status(422).json({ msg: "Image file is required" });
+		}
+
+		const fileSize = file.size;
+		const ext = path.extname(file.name);
+		fileName = file.md5 + Date.now() + ext;
+		const allowedType = [".png", ".jpg", ".jpeg"];
+
+		if (!allowedType.includes(ext.toLowerCase()))
+			return res.status(422).json({ msg: "Invalid image format" });
+		if (fileSize > 5000000) return res.status(422).json({ msg: "Image must be less than 5 MB" });
+
+		if (product.image !== "") {
+			const filepath = `./public/images/products/${product.image}`;
+			if (fs.existsSync(filepath)) {
+				fs.unlinkSync(filepath);
+			}
+		}
+
+		file.mv(`./public/images/products/${fileName}`, (err) => {
+			if (err) return res.status(500).json({ msg: err.message });
+		});
+	}
+
+	const imageUrl = `${req.protocol}://${req.get("host")}/images/products/${fileName}`;
+
+	try {
+		await Products.update(
+			{
+				nameProduct,
+				slug,
+				image: fileName,
+				imageUrl,
+				desc,
+				productCategoryUuid,
+				stock,
+				price,
+			},
+			{
+				where: {
+					uuid,
+				},
+			}
+		);
+
+		res.status(200).json({ msg: "Product updated" });
+	} catch (error) {
+		res.status(400).json({ msg: error.message });
+	}
+};
+
+export const deleteProduct = async (req, res) => {
+	const { uuid } = req.params;
+	const product = await Products.findOne({
+		where: {
+			uuid,
+		},
+	});
+	if (!product) return res.status(404).json({ msg: "User tidak ditemukan!" });
+	try {
+		await Products.destroy({
+			where: {
+				uuid,
+			},
+		});
+		const filepath = `./public/images/products/${product.image}`;
+		fs.unlinkSync(filepath);
+		res.status(200).json({ msg: "Product and image deleted successfully" });
+	} catch (error) {
+		res.status(400).json({ msg: error.message });
+	}
+};

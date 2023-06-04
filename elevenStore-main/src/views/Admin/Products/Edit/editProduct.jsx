@@ -1,87 +1,98 @@
-import React from "react";
-import Button from "components/Button";
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchRoles } from "features/roleSlice";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-import Swal from "sweetalert2";
-
-import { TextField, MenuItem, IconButton, Avatar, Alert } from "@mui/material";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {
+	TextField,
+	MenuItem,
+	FormControl,
+	InputLabel,
+	FormHelperText,
+	Select,
+	Button,
+	InputAdornment,
+} from "@mui/material";
+import CustomButton from "components/Button";
+import axios from "axios";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import ImageDummy from "assets/images/default-placeholder.png";
+import Swal from "sweetalert2";
+import { useNavigate, useParams } from "react-router-dom";
 
 const schema = yup.object().shape({
-	username: yup.string().required("Username is required"),
-	name: yup.string().required("Name is required"),
-	email: yup.string().required("Email is required").email("Invalid email"),
+	nameProduct: yup.string().required("Product name is required"),
+	desc: yup.string().required("Description is required"),
+	productCategoryUuid: yup.string().required("Product category UUID is required"),
+	stock: yup.string().required("Stock is required"),
+	price: yup.string().required("Price is required"),
 	file: yup.mixed(),
-	roleCategoryUuid: yup.string().required("Role Category is required"),
 });
 
-export default function EditUser() {
-	const [preview, setPreview] = useState("");
-	const [msg, setMsg] = useState("");
-
+export default function EditProduct() {
+	const { uuid } = useParams();
 	const {
+		control,
 		register,
 		handleSubmit,
-		control,
 		setValue,
-		getValues,
 		formState: { errors },
 	} = useForm({
 		mode: "all",
-		defaultValues: {
-			username: "",
-			name: "",
-			roleCategoryUuid: "",
-			email: "",
-		},
 		resolver: yupResolver(schema),
 	});
-
-	const { uuid } = useParams();
-	const dispatch = useDispatch();
+	const [previewImage, setPreviewImage] = useState(null);
+	const [productCategories, setProductCategories] = useState([]);
 	const navigate = useNavigate();
-	const stateRole = useSelector((state) => state.roleCategories);
+	const fileInputRef = useRef(null);
 
 	useEffect(() => {
-		dispatch(fetchRoles());
-	}, [dispatch]);
+		fetchProductCategories();
+		fetchProduct();
+	}, []);
 
-	useEffect(() => {
-		if (!uuid) return;
-		const getUser = async () => {
-			try {
-				const response = await axios.get(`${process.env.REACT_APP_MY_API}/product/${uuid}`);
-				setValue("username", response.data.username);
-				setValue("name", response.data.name);
-				setValue("roleCategoryUuid", response.data.roleCategoryUuid);
-				setValue("email", response.data.email);
-				setValue("file", response.data.avatarUrl);
-			} catch (error) {
-				if (error.response) {
-					setMsg(error.response.data.msg);
-				}
-			}
-		};
-		getUser();
-	}, [uuid]);
-
-	const onSubmit = async (data, e) => {
-		e.preventDefault();
+	const fetchProductCategories = async () => {
 		try {
-			await axios.patch(`${process.env.REACT_APP_MY_API}/product/${uuid}`, data, {
+			const response = await axios.get(`${process.env.REACT_APP_MY_API}/product-categories`);
+			setProductCategories(response.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	const fetchProduct = async () => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_MY_API}/product/${uuid}`);
+			const product = response.data;
+			setValue("nameProduct", product.nameProduct);
+			setValue("desc", product.desc);
+			setValue("productCategoryUuid", product.productCategoryUuid);
+			setValue("stock", product.stock.toString());
+			setValue("price", product.price.toString());
+			setPreviewImage(product.imageUrl);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const onSubmit = async (data) => {
+		try {
+			const formData = new FormData();
+			formData.append("nameProduct", data.nameProduct);
+			formData.append("desc", data.desc);
+			formData.append("productCategoryUuid", data.productCategoryUuid);
+			formData.append("stock", parseInt(data.stock));
+			formData.append("price", parseInt(data.price));
+			if (data.file) {
+				formData.append("file", data.file[0]);
+			}
+
+			await axios.put(`${process.env.REACT_APP_MY_API}/product/${uuid}`, formData, {
 				headers: {
-					"Content-type": "multipart/form-data",
+					"Content-Type": "multipart/form-data",
 				},
 			});
 			Swal.fire({
 				title: "Berhasil",
-				text: "Akun berhasil diubah, akan di arahkan ke halaman users!",
+				text: "Product berhasil diubah, akan diarahkan ke halaman product!",
 				icon: "success",
 				confirmButtonText: "Oke",
 				allowOutsideClick: false,
@@ -92,129 +103,194 @@ export default function EditUser() {
 				timer: 2000,
 				timerProgressBar: true,
 			}).then(function () {
-				// Redirect the user
-				navigate("/products");
+				navigate("/admin/products");
 			});
 		} catch (error) {
-			if (error.response) {
-				setMsg(error.response.data.msg);
-			}
+			Swal.fire({
+				title: "Error",
+				text: `An error occurred while updated the product. ${error.response.data.msg}`,
+				icon: "error",
+				confirmButtonText: "OK",
+				allowOutsideClick: false,
+				customClass: {
+					confirmButton: "confirm",
+				},
+				buttonsStyling: false,
+			});
+		}
+	};
+
+	const handleImageUpload = () => {
+		const fileInput = fileInputRef.current;
+		fileInput.click();
+	};
+
+	const handleFileChange = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			setPreviewImage(URL.createObjectURL(file));
+			setValue("file", e.target.files);
 		}
 	};
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
-			{msg && (
-				<Alert sx={{ textTransform: "lowercase" }} severity="error">
-					{msg}
-				</Alert>
-			)}
-			<div className="flex md:flex-row flex-col-reverse gap-4 items-center justify-center">
-				<div className="flex flex-col w-full gap-y-4 flex-grow">
+			<div className="flex flex-col w-full gap-y-4 flex-grow">
+				<div className="flex flex-col md:flex-row gap-4">
 					<Controller
-						{...register("username")}
 						control={control}
+						name="nameProduct"
+						defaultValue=""
 						render={({ field }) => (
 							<TextField
+								fullWidth
+								label="Product Name"
 								{...field}
-								label="Username"
-								placeholder="Username"
-								error={!!errors.username}
-								helperText={errors.username?.message}
+								error={!!errors.nameProduct}
+								helperText={errors.nameProduct?.message}
 							/>
 						)}
 					/>
-					<div className="flex md:flex-row flex-col justify-between gap-4">
+					<FormControl error={!!errors.productCategoryUuid} variant="outlined" fullWidth>
+						<InputLabel id="product-category-label">Product Category</InputLabel>
 						<Controller
-							{...register("name")}
 							control={control}
+							name="productCategoryUuid"
+							defaultValue=""
 							render={({ field }) => (
-								<TextField
-									{...field}
-									className="flex-[70%]"
-									label="Nama Lengkap"
-									placeholder="Nama Lengkap"
-									error={!!errors.name}
-									helperText={errors.name?.message}
-								/>
+								<Select labelId="product-category-label" label="Product Category" {...field}>
+									{productCategories.map((category) => (
+										<MenuItem key={category.uuid} value={category.uuid}>
+											{category.productCategoryName.charAt(0).toUpperCase() +
+												category.productCategoryName.slice(1)}
+										</MenuItem>
+									))}
+								</Select>
 							)}
 						/>
-						<Controller
-							{...register("roleCategoryUuid")}
-							control={control}
-							defaultValue={stateRole.isLoading && "loading"}
-							render={({ field }) => (
-								<TextField
-									className="flex-[30%]"
-									{...field}
-									select
-									label="Role"
-									error={!!errors.roleCategoryUuid}
-									helperText={errors.roleCategoryUuid?.message}
-								>
-									{stateRole.isLoading && <MenuItem value={"loading"}>Loading...</MenuItem>}
-									{stateRole.data &&
-										stateRole.data.map((dataRole, idx) => (
-											<MenuItem key={dataRole.roleName + idx} value={dataRole.uuid}>
-												{dataRole.roleName.charAt(0).toUpperCase() + dataRole.roleName.slice(1)}
-											</MenuItem>
-										))}
-								</TextField>
-							)}
-						/>
-					</div>
-					<div className="flex md:flex-row flex-col justify-between gap-4">
-						<Controller
-							{...register("email")}
-							control={control}
-							render={({ field }) => (
-								<TextField
-									{...field}
-									className="flex-[70%]"
-									type="email"
-									label="Email"
-									placeholder="Email"
-									error={!!errors.email}
-									helperText={errors.email?.message}
-								/>
-							)}
-						/>
-					</div>
+						<FormHelperText>{errors.productCategoryUuid?.message}</FormHelperText>
+					</FormControl>
 				</div>
-				<div className="flex flex-col justify-center items-center text-center">
-					<span className="">{null}</span>
-					<div className="px-16 py-4">
-						<Avatar
-							alt="Avatar"
-							src={`${preview ? preview : getValues("file")}`}
-							sx={{ width: 192, height: 192 }}
-						/>
-						<div className="flex items-center justify-center">
-							<IconButton color="primary" aria-label="changeImage" component="label">
-								<input
-									{...register("file")}
-									hidden
-									type="file"
-									onChange={(e) => {
-										const image = e.target.files[0];
-										setValue("file", image);
-										setPreview(URL.createObjectURL(image));
-									}}
-								/>
-								<AddPhotoAlternateIcon fontSize="large" />
-								<p className="text-lg mt-1">Ganti foto</p>
-							</IconButton>
+				<div className="flex md:flex-row flex-col gap-4">
+					<div className="flex flex-col">
+						<div className="w-full h-full rounded-lg overflow-hidden">
+							<img
+								alt="Product Image"
+								src={previewImage || ImageDummy}
+								className="object-contain h-full w-[400px]"
+							/>
+						</div>
+						<div className="flex items-center justify-start mt-4">
+							<Button
+								variant="outlined"
+								aria-label="changeImage"
+								startIcon={<AddPhotoAlternateIcon fontSize="large" />}
+								onClick={handleImageUpload}
+							>
+								Upload
+							</Button>
+							<input
+								hidden
+								type="file"
+								{...register("file")}
+								ref={fileInputRef}
+								onChange={handleFileChange}
+							/>
 						</div>
 					</div>
+					<div className="flex flex-col gap-4 grow">
+						<Controller
+							control={control}
+							name="stock"
+							defaultValue=""
+							render={({ field }) => (
+								<TextField
+									label="Stock"
+									{...field}
+									type="text"
+									error={!!errors.stock}
+									helperText={errors.stock?.message}
+									InputProps={{
+										pattern: "^[0-9]*$",
+										inputMode: "numeric",
+										onKeyDown: (event) => {
+											const key = event.key;
+											const isBackspaceOrDelete = key === "Backspace" || key === "Delete";
+											if (!isBackspaceOrDelete) {
+												const regex = /^[0-9]+$/;
+												if (!regex.test(key)) {
+													event.preventDefault();
+												}
+											}
+										},
+									}}
+								/>
+							)}
+						/>
+						<Controller
+							control={control}
+							name="price"
+							defaultValue=""
+							render={({ field }) => (
+								<TextField
+									label="Price"
+									{...field}
+									type="text"
+									error={!!errors.price}
+									helperText={errors.price?.message}
+									InputProps={{
+										inputMode: "numeric",
+										onKeyDown: (event) => {
+											const key = event.key;
+											const isBackspaceOrDelete = key === "Backspace" || key === "Delete";
+											if (!isBackspaceOrDelete) {
+												const regex = /^[0-9]+$/;
+												if (!regex.test(key)) {
+													event.preventDefault();
+												}
+											}
+										},
+										startAdornment: <InputAdornment position="start">Rp.</InputAdornment>,
+									}}
+								/>
+							)}
+						/>
+						<Controller
+							control={control}
+							name="desc"
+							defaultValue=""
+							render={({ field }) => (
+								<TextField
+									label="Description"
+									{...field}
+									error={!!errors.desc}
+									helperText={errors.desc?.message}
+									multiline
+									rows={4}
+									onKeyDown={(event) => {
+										if (event.key === "Enter" && !event.shiftKey) {
+											event.preventDefault();
+											const textField = event.target;
+											const { selectionStart, value } = textField;
+											const newValue =
+												value.substring(0, selectionStart) +
+												"\n" +
+												value.substring(textField.selectionEnd);
+											textField.value = newValue;
+											// Trigger the form validation manually
+											setValue("desc", newValue);
+										}
+									}}
+								/>
+							)}
+						/>
+					</div>
 				</div>
-			</div>
-			<div className="mt-4">
-				<Button
-					type="submit"
-					inputClassName="bg-gradient-to-br from-sky-700 to-sky-500 text-white hover:scale-105 hover:translate-x-0.5 transition-all"
-				>
-					Simpan
-				</Button>
+				<div className="inline-flex justify-end">
+					<CustomButton type="submit" primary>
+						Simpan Product
+					</CustomButton>
+				</div>
 			</div>
 		</form>
 	);

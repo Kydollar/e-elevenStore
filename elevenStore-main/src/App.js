@@ -15,6 +15,7 @@ import AdminAddProduct from "./views/Admin/Products/Add";
 import AdminEditProduct from "./views/Admin/Products/Edit";
 import AdminPaymentMethod from "./views/Admin/PaymentMethod";
 import AdminAddPaymentMethod from "./views/Admin/PaymentMethod/Add";
+import AdminEditPaymentMethod from "./views/Admin/PaymentMethod/Edit";
 
 // User
 import Account from "views/User";
@@ -146,6 +147,14 @@ function App() {
             element={
               <ProtectedRoute admin>
                 <AdminAddPaymentMethod />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/payment-method/:uuid"
+            element={
+              <ProtectedRoute admin>
+                <AdminEditPaymentMethod />
               </ProtectedRoute>
             }
           />

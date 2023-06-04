@@ -64,7 +64,7 @@ export const updatePaymentMethod = async (req, res) => {
 		const paymentMethod = await PaymentMethod.findOne({ where: { uuid } });
 		if (paymentMethod) {
 			paymentMethod.paymentName = paymentName;
-			paymentMethod.valuePaymen = paymentName;
+			paymentMethod.valuePayment = paymentName;
 			paymentMethod.name = name;
 			paymentMethod.norek = norek;
 			await paymentMethod.save();

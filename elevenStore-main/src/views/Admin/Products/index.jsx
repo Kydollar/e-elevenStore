@@ -109,9 +109,8 @@ export default function Products() {
 		setProducts(response.data);
 	};
 
-	console.log(products)
-
 	const handleDelete = (displayData, selectedRows) => {
+		console.log(displayData[selectedRows.data[0].index].data[0])
 		Swal.fire({
 			title: "Apakah anda yakin?",
 			text: "Anda tidak akan dapat mengembalikan ini!",
