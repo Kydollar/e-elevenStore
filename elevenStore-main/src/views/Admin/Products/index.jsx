@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Button from "components/Button";
 import axios from "axios";
 
-import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import MUIDataTable from "mui-datatables";
@@ -110,7 +110,7 @@ export default function Products() {
 	};
 
 	const handleDelete = (displayData, selectedRows) => {
-		console.log(displayData[selectedRows.data[0].index].data[0])
+		console.log(displayData[selectedRows.data[0].index].data[0]);
 		Swal.fire({
 			title: "Apakah anda yakin?",
 			text: "Anda tidak akan dapat mengembalikan ini!",
@@ -187,15 +187,15 @@ export default function Products() {
 				<Link to={"add"}>
 					<Button primary>
 						<div className="inline-flex align-middle">
-							<PersonAddRoundedIcon alt="Add User" fontSize={"small"} />
-							<p className="ml-2 cursor-pointer">Tambah Product</p>
+							<AddBusinessIcon alt="Add Product" fontSize={"small"} />
+							<p className="ml-2 cursor-pointer">Add Product</p>
 						</div>
 					</Button>
 				</Link>
 			</div>
 			<ThemeProvider theme={getMuiTheme()}>
 				<MUIDataTable
-					title={"Products"}
+					title={"List of Products"}
 					data={products.map((e) => [
 						e.uuid,
 						e,

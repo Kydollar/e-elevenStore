@@ -46,6 +46,29 @@ const columns = [
 		},
 	},
 	{
+		name: "avatar",
+		label: "Avatar",
+		options: {
+			filter: false,
+			sort: false,
+			customBodyRender: (value) => {
+				return (
+					<img
+						src={value}
+						alt="User"
+						style={{
+							width: "50px",
+							height: "50px",
+							backgroundSize: "cover",
+							borderRadius: "50%",
+						}}
+						className="rounded-full bg-center"
+					/>
+				);
+			},
+		},
+	},
+	{
 		name: "username",
 		label: "Username",
 		options: {
@@ -194,7 +217,7 @@ export default function Users() {
 					<Button primary>
 						<div className="inline-flex align-middle">
 							<PersonAddRoundedIcon alt="Add User" fontSize={"small"} />
-							<p className="ml-2 cursor-pointer">Tambah User</p>
+							<p className="ml-2 cursor-pointer">Add User</p>
 						</div>
 					</Button>
 				</Link>
@@ -206,6 +229,7 @@ export default function Users() {
 						e.uuid,
 						`edit/${e.uuid}`,
 						moment(e.createdAt).format("dddd, D MMMM YYYY"),
+						e.avatarUrl,
 						e.username,
 						e.name,
 						e.email,

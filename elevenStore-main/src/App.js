@@ -16,6 +16,9 @@ import AdminEditProduct from "./views/Admin/Products/Edit";
 import AdminPaymentMethod from "./views/Admin/PaymentMethod";
 import AdminAddPaymentMethod from "./views/Admin/PaymentMethod/Add";
 import AdminEditPaymentMethod from "./views/Admin/PaymentMethod/Edit";
+import AdminProductCategories from "./views/Admin/ProductCategories";
+import AdminAddProductCategories from "./views/Admin/ProductCategories/Add";
+import AdminEditProductCategories from "./views/Admin/ProductCategories/Edit";
 
 // User
 import Account from "views/User";
@@ -155,6 +158,30 @@ function App() {
 						element={
 							<ProtectedRoute role={"admin"}>
 								<AdminEditPaymentMethod />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/product-categories"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminProductCategories />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/product-categories/add"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminAddProductCategories />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/product-categories/:uuid"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminEditProductCategories />
 							</ProtectedRoute>
 						}
 					/>

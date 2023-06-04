@@ -5,10 +5,10 @@ import Button from "components/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
 import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import MUIDataTable from "mui-datatables";
-import AddCardIcon from '@mui/icons-material/AddCard';
 
 const columns = [
 	{
@@ -30,16 +30,8 @@ const columns = [
 		},
 	},
 	{
-		name: "paymentName",
-		label: "Nama Bank/Penyedia Layanan",
-		options: {
-			filter: true,
-			sort: false,
-		},
-	},
-	{
-		name: "norek",
-		label: "Nomer Rekening",
+		name: "description",
+		label: "Deskripsi",
 		options: {
 			filter: false,
 			sort: false,
@@ -47,8 +39,8 @@ const columns = [
 	},
 ];
 
-export default function PaymentMethods() {
-	const [paymentMethods, setPaymentMethods] = useState([]);
+export default function CategoriesProduct() {
+	const [categoriesProduct, setCategoriesProduct] = useState([]);
 
 	const options = {
 		selectableRowsHeader: false,
@@ -76,13 +68,13 @@ export default function PaymentMethods() {
 	};
 
 	useEffect(() => {
-		getPaymentMethods();
+		getCategoriesProduct();
 	}, []);
 
-	const getPaymentMethods = async () => {
+	const getCategoriesProduct = async () => {
 		try {
-			const response = await axios.get(`${process.env.REACT_APP_MY_API}/payment-methods`);
-			setPaymentMethods(response.data);
+			const response = await axios.get(`${process.env.REACT_APP_MY_API}/product-categories`);
+			setCategoriesProduct(response.data);
 		} catch (error) {
 			console.log(error);
 		}
@@ -113,12 +105,12 @@ export default function PaymentMethods() {
 				}).then(async () => {
 					if (selectedRows.data.length <= 1) {
 						const displayDataOnlyOne = displayData[selectedRows.data[0].index].data[0];
-						setPaymentMethods(paymentMethods.filter((u) => u.uuid !== displayDataOnlyOne));
+						setCategoriesProduct(categoriesProduct.filter((u) => u.uuid !== displayDataOnlyOne));
 						try {
 							await axios.delete(
-								`${process.env.REACT_APP_MY_API}/payment-methods/${displayDataOnlyOne}`
+								`${process.env.REACT_APP_MY_API}/categories-product/${displayDataOnlyOne}`
 							);
-							getPaymentMethods();
+							getCategoriesProduct();
 						} catch (error) {
 							console.log(error);
 						}
@@ -126,10 +118,12 @@ export default function PaymentMethods() {
 						let multiData;
 						for (let i = 0; i < selectedRows.data.length; i++) {
 							multiData = displayData[selectedRows.data[i].index].data[0];
-							setPaymentMethods(paymentMethods.filter((u) => u.uuid !== multiData));
+							setCategoriesProduct(categoriesProduct.filter((u) => u.uuid !== multiData));
 							try {
-								await axios.delete(`${process.env.REACT_APP_MY_API}/payment-methods/${multiData}`);
-								getPaymentMethods();
+								await axios.delete(
+									`${process.env.REACT_APP_MY_API}/categories-product/${multiData}`
+								);
+								getCategoriesProduct();
 							} catch (error) {
 								console.log(error);
 							}
@@ -167,16 +161,16 @@ export default function PaymentMethods() {
 				<Link to={"add"}>
 					<Button primary>
 						<div className="inline-flex align-middle">
-							<AddCardIcon alt="Add Payment" fontSize={"small"} />
-							<p className="ml-2 cursor-pointer">Add Payment Method</p>
+							<AddBoxRoundedIcon alt="Add Category" fontSize={"small"} />
+							<p className="ml-2 cursor-pointer">Add Category</p>
 						</div>
 					</Button>
 				</Link>
 			</div>
 			<ThemeProvider theme={getMuiTheme()}>
 				<MUIDataTable
-					title={"List of Payment Methods"}
-					data={paymentMethods.map((e) => [e.uuid, e.name, e.paymentName, e.norek])}
+					title={"List of Product Categories"}
+					data={categoriesProduct.map((e) => [e.uuid, e.productCategoryName, e.description])}
 					columns={columns}
 					options={options}
 				/>
