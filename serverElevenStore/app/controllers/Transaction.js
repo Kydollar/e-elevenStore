@@ -6,6 +6,7 @@ import Users from "../models/UserModel.js";
 import Cart from "../models/CartModel.js";
 import PaymentMethod from "../models/PaymentMethodModel.js";
 import Address from "../models/AddressModel.js";
+import ProofOfPayment from "../models/ProofOfPaymentModel.js";
 
 // export const getCheckoutByUserUuid = async (req, res) => {
 // 	// try {
@@ -38,6 +39,45 @@ import Address from "../models/AddressModel.js";
 // 	// 	res.status(500).json({ msg: error.message });
 // 	// }
 // };
+
+export const getAllCheckouts = async (req, res) => {
+	try {
+		const checkouts = await Transaction.findAll({
+			include: [
+				{
+					model: Cart,
+					attributes: [
+						"uuid",
+						"invoice",
+						"productUuid",
+						"userUuid",
+						"desc",
+						"quantity",
+						"subtotal",
+					],
+					include: [{ model: Products }],
+				},
+				{
+					model: Users,
+					attributes: ["name", "email"],
+				},
+				{
+					model: PaymentMethod,
+				},
+				{
+					model: Address,
+				},
+				{
+					model: ProofOfPayment,
+				},
+			],
+		});
+
+		res.status(200).json(checkouts);
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};
 
 export const getCheckouts = async (req, res) => {
 	try {
@@ -90,6 +130,36 @@ export const getCheckouts = async (req, res) => {
 		}
 
 		res.status(200).json(checkout);
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};
+
+export const updateCheckoutStatusByInvoice = async (req, res) => {
+	try {
+		const invoices = req.params.invoice; // Menggunakan "invoices" (plural) sebagai nama variabel untuk mewakili parameter yang mungkin berisi beberapa invoice
+
+		const { status } = req.body;
+
+		// Mencari semua checkout yang sesuai dengan invoice-invoice yang diberikan
+		const checkouts = await Transaction.findAll({
+			where: {
+				invoice: invoices, // Menggunakan "invoices" (plural) untuk mencocokkan multiple invoice
+			},
+		});
+
+		if (checkouts.length === 0) {
+			return res.status(404).json({ msg: "Checkout tidak ditemukan" });
+		}
+
+		// Mengupdate status checkout untuk setiap checkout yang ditemukan
+		await Promise.all(
+			checkouts.map(async (checkout) => {
+				await checkout.update({ status: status });
+			})
+		);
+
+		res.status(200).json({ msg: "Status checkout berhasil diperbarui" });
 	} catch (error) {
 		res.status(500).json({ msg: error.message });
 	}

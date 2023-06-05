@@ -19,6 +19,7 @@ import AdminEditPaymentMethod from "./views/Admin/PaymentMethod/Edit";
 import AdminProductCategories from "./views/Admin/ProductCategories";
 import AdminAddProductCategories from "./views/Admin/ProductCategories/Add";
 import AdminEditProductCategories from "./views/Admin/ProductCategories/Edit";
+import AdminTransactions from "./views/Admin/Transactions";
 
 // User
 import Account from "views/User";
@@ -182,6 +183,14 @@ function App() {
 						element={
 							<ProtectedRoute role={"admin"}>
 								<AdminEditProductCategories />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/transactions"
+						element={
+							<ProtectedRoute role={"admin"}>
+								<AdminTransactions />
 							</ProtectedRoute>
 						}
 					/>

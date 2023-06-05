@@ -5,17 +5,10 @@ const { DataTypes } = Sequelize;
 const ProofOfPayment = db.define(
 	"proof_of_payment",
 	{
-		uuid: {
-			type: DataTypes.STRING,
-			defaultValue: DataTypes.UUIDV4,
-			primaryKey: true,
-			validate: {
-				notEmpty: true,
-			},
-		},
 		invoice: {
 			type: DataTypes.STRING,
-			allowNull: true,
+			primaryKey: true,
+			allowNull: false,
 		},
 		file: {
 			type: DataTypes.STRING,

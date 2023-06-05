@@ -4,6 +4,7 @@ import Cart from "./CartModel.js";
 import Users from "./UserModel.js";
 import Address from "./AddressModel.js";
 import PaymentMethod from "./PaymentMethodModel.js";
+import ProofOfPayment from "./ProofOfPaymentModel.js";
 
 const { DataTypes } = Sequelize;
 const Transaction = db.define(
@@ -79,5 +80,6 @@ Transaction.belongsTo(Users, { foreignKey: "userUuid" });
 Transaction.belongsTo(Cart, { foreignKey: "cartUuid" });
 Transaction.belongsTo(Address, { foreignKey: "addressUuid" });
 Transaction.belongsTo(PaymentMethod, { foreignKey: "paymentMethodUuid" });
+Transaction.hasOne(ProofOfPayment, { foreignKey: "invoice", sourceKey: "invoice" });
 
 export default Transaction;

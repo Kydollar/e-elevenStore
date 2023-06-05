@@ -1,9 +1,11 @@
 import React from "react";
 import LocalLibraryOutlinedIcon from "@mui/icons-material/LocalLibraryOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+// import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import PeopleOutlineRoundedIcon from "@mui/icons-material/PeopleOutlineRounded";
 import PaymentIcon from '@mui/icons-material/Payment';
 import CategoryIcon from '@mui/icons-material/Category';
+import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
+import PaidIcon from '@mui/icons-material/Paid';
 
 export const menuAdmin = [
 	{
@@ -32,8 +34,13 @@ export const menuAdmin = [
 		],
 	},
 	{
-		icon: <DescriptionOutlinedIcon />,
-		title: "Product",
+		icon: <PhoneIphoneIcon />,
+		title: "Products",
 		to: "/admin/products",
+	},
+	{
+		icon: <PaidIcon />,
+		title: "Transactions",
+		to: "/admin/transactions",
 	}
 ];
