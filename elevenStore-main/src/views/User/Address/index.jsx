@@ -10,7 +10,7 @@ export default function Address() {
 	const [address, setAddress] = useState([]);
 	const [msg, setMsg] = useState("");
 	const navigate = useNavigate();
-	const { user } = useSelector((state) => state.auth);
+	const { user = {} } = useSelector((state) => state?.auth);
 	useEffect(() => {
 		if (!user?.uuid) return;
 		const getAddress = async () => {
@@ -90,72 +90,77 @@ export default function Address() {
 	};
 	return (
 		<div className="flex flex-col pt-2">
-			<div className="flex justify-between items-center pb-4">
-				<h1>Alamat Saya</h1>
-				<Button onClick={() => navigate("add-address")} primary>
-					+&nbsp;Tambah Alamat Baru
-				</Button>
-			</div>
-			<Divider />
-			{!msg ? (
-				sortedAddresses.map((a, idx) => (
-					<div key={a.uuid + idx} className="flex justify-between items-center gap-4 my-6">
-						<div className="block">
-							<div className="inline-flex gap-2 justify-center items-center">
-								<h1>{a.name}</h1> <span className="text-gray-500/50">|</span>
-								<p className="text-gray-500">{a.phoneNumber}</p>
-							</div>
-							<div className="flex flex-col gap-2 items-start">
-								<p className="text-gray-500 text-sm">{a.detailAddress}</p>
-								{a.primaryAddress ? (
-									<span className="border border-blue-500 text-blue-500 py-1 px-2 text-sm rounded">
-										Utama
-									</span>
-								) : (
-									<span className="border border-gray-500/50 text-gray-500/50 py-1 px-2 text-sm rounded">
-										Utama
-									</span>
-								)}
-							</div>
-						</div>
-						<div className="flex flex-col items-end justify-center gap-2">
-							<div className="flex gap-2">
-								<button
-									className="text-sm px-2 hover:text-blue-500"
-									onClick={() =>
-										navigate(`${a.uuid}`, {
-											state: {
-												user,
-											},
-										})
-									}
-								>
-									Ubah
-								</button>
-								{!a.primaryAddress && (
-									<>
-										<span className="text-gray-500/50">|</span>
-										<button
-											className="text-sm px-2 hover:text-red-500"
-											onClick={() => handleDeleteAddress(a.uuid)}
-										>
-											Hapus
-										</button>
-									</>
-								)}
-							</div>
-							{!a.primaryAddress && (
-								<Button onClick={() => handleSetPrimaryAddress(a.uuid)} secondary>
-									Atur Sebagai Utama
-								</Button>
-							)}
-						</div>
+			{user?.role_category.roleName !== "admin" && (
+				<>
+					<div className="flex justify-between items-center pb-4">
+						<h1>Alamat Saya</h1>
+						<Button onClick={() => navigate("add-address")} primary>
+							+&nbsp;Tambah Alamat Baru
+						</Button>
 					</div>
-				))
-			) : (
-				<div className="my-6 text-center">
-					Anda tidak memiliki alamat mohon untuk menambahkan alamat agar dapat melanjutkan belanja
-				</div>
+					<Divider />
+					{!msg ? (
+						sortedAddresses.map((a, idx) => (
+							<div key={a.uuid + idx} className="flex justify-between items-center gap-4 my-6">
+								<div className="block">
+									<div className="inline-flex gap-2 justify-center items-center">
+										<h1>{a.name}</h1> <span className="text-gray-500/50">|</span>
+										<p className="text-gray-500">{a.phoneNumber}</p>
+									</div>
+									<div className="flex flex-col gap-2 items-start">
+										<p className="text-gray-500 text-sm">{a.detailAddress}</p>
+										{a.primaryAddress ? (
+											<span className="border border-blue-500 text-blue-500 py-1 px-2 text-sm rounded">
+												Utama
+											</span>
+										) : (
+											<span className="border border-gray-500/50 text-gray-500/50 py-1 px-2 text-sm rounded">
+												Utama
+											</span>
+										)}
+									</div>
+								</div>
+								<div className="flex flex-col items-end justify-center gap-2">
+									<div className="flex gap-2">
+										<button
+											className="text-sm px-2 hover:text-blue-500"
+											onClick={() =>
+												navigate(`${a.uuid}`, {
+													state: {
+														user,
+													},
+												})
+											}
+										>
+											Ubah
+										</button>
+										{!a.primaryAddress && (
+											<>
+												<span className="text-gray-500/50">|</span>
+												<button
+													className="text-sm px-2 hover:text-red-500"
+													onClick={() => handleDeleteAddress(a.uuid)}
+												>
+													Hapus
+												</button>
+											</>
+										)}
+									</div>
+									{!a.primaryAddress && (
+										<Button onClick={() => handleSetPrimaryAddress(a.uuid)} secondary>
+											Atur Sebagai Utama
+										</Button>
+									)}
+								</div>
+							</div>
+						))
+					) : (
+						<div className="my-6 text-center">
+							Anda tidak memiliki alamat mohon untuk menambahkan alamat agar dapat melanjutkan
+							belanja
+						</div>
+					)}
+				</>
 			)}
 		</div>
 	);

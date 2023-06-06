@@ -97,24 +97,26 @@ export default function DetailProducts() {
 							</h1>
 							<p className="leading-relaxed">{productData?.desc}</p>
 							<div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5 gap-2">
-								<div className="border border-gray-300 rounded-lg px-2">
-									<button
-										className={`${quantity > 1 ? "" : "disabled:opacity-40 cursor-not-allowed"}`}
-										type="button"
-										onClick={() => setQuantity(quantity - 1)}
-										disabled={quantity > 1 ? false : true}
-									>
-										-
-									</button>
-									<span className="mx-4 text-sm">{quantity}</span>
-									<button
-										type="button"
-										onClick={() => setQuantity(quantity + 1)}
-										disabled={quantity < productData.stock ? false : true}
-									>
-										+
-									</button>
-								</div>
+								{user?.role_category.roleName !== "admin" && (
+									<div className="border border-gray-300 rounded-lg px-2">
+										<button
+											className={`${quantity > 1 ? "" : "disabled:opacity-40 cursor-not-allowed"}`}
+											type="button"
+											onClick={() => setQuantity(quantity - 1)}
+											disabled={quantity > 1 ? false : true}
+										>
+											-
+										</button>
+										<span className="mx-4 text-sm">{quantity}</span>
+										<button
+											type="button"
+											onClick={() => setQuantity(quantity + 1)}
+											disabled={quantity < productData.stock ? false : true}
+										>
+											+
+										</button>
+									</div>
+								)}
 								<p>Stok: {productData.stock}</p>
 							</div>
 							<div className="flex flex-col gap-4">
@@ -124,22 +126,24 @@ export default function DetailProducts() {
 										{formatter.format(totalPrice)}
 									</span>
 								</div>
-								<div className="flex flex-col gap-4">
-									<Button
-										inputClassName="justify-center items-center"
-										onClick={() => handleCart(productData)}
-										primary
-									>
-										Keranjang
-									</Button>
-									<Button
-										inputClassName="justify-center items-center"
-										onClick={() => handleCart(productData, true)}
-										secondary
-									>
-										Beli
-									</Button>
-								</div>
+								{user?.role_category.roleName !== "admin" && (
+									<div className="flex flex-col gap-4">
+										<Button
+											inputClassName="justify-center items-center"
+											onClick={() => handleCart(productData)}
+											primary
+										>
+											Keranjang
+										</Button>
+										<Button
+											inputClassName="justify-center items-center"
+											onClick={() => handleCart(productData, true)}
+											secondary
+										>
+											Beli
+										</Button>
+									</div>
+								)}
 							</div>
 						</div>
 					</div>

@@ -309,3 +309,47 @@ export const updateProfile = async (req, res) => {
 		res.status(400).json({ msg: error.message });
 	}
 };
+
+// PROFILE USER
+export const updateChangePasswordOnlyUser = async (req, res) => {
+	const user = await User.findOne({
+		where: {
+			uuid: req.params.id,
+		},
+	});
+
+	if (!user) {
+		return res.status(404).json({ msg: "User not found" });
+	}
+
+	const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+	if (newPassword !== confirmNewPassword) {
+		return res.status(400).json({ msg: "New password and confirm password do not match" });
+	}
+
+	try {
+		const isPasswordMatch = await argon2.verify(user.password, currentPassword);
+
+		if (!isPasswordMatch) {
+			return res.status(400).json({ msg: "Current password is incorrect" });
+		}
+
+		const hashedNewPassword = await argon2.hash(newPassword);
+
+		await User.update(
+			{
+				password: hashedNewPassword,
+			},
+			{
+				where: {
+					uuid: user.uuid,
+				},
+			}
+		);
+
+		res.status(200).json({ msg: "Password successfully updated" });
+	} catch (error) {
+		res.status(500).json({ msg: error.message });
+	}
+};

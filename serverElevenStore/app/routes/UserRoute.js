@@ -8,6 +8,7 @@ import {
 	deleteUser,
 	getCheckUsers,
 	updateProfile,
+	updateChangePasswordOnlyUser,
 } from "../controllers/Users.js";
 import { adminOnly, verifyUser } from "../middleware/AuthUser.js";
 
@@ -20,6 +21,7 @@ router.post("/users", verifyUser, adminOnly, createUser);
 router.patch("/users/:id", verifyUser, adminOnly, updateUser);
 router.patch("/users/profile/:uuid", verifyUser, updateProfile);
 router.patch("/users/:id/password", verifyUser, adminOnly, updatePasswordUser);
+router.put("/users/:id/change-password", verifyUser, updateChangePasswordOnlyUser);
 router.delete("/users/:id", verifyUser, adminOnly, deleteUser);
 
 export default router;

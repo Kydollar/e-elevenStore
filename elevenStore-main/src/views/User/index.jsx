@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import classNames from "classnames";
+import { useSelector } from "react-redux";
 
 export default function LayoutAccount() {
 	const location = useLocation();
+	const { user = {} } = useSelector((state) => state?.auth);
 
 	const getLinkClass = (path) => {
 		return classNames({
@@ -19,12 +21,20 @@ export default function LayoutAccount() {
 				<Link to={`/user/account/profile`} className={getLinkClass("/user/account/profile")}>
 					Profil
 				</Link>
-                <span className="text-gray-300">|</span>
-				<Link to={`/user/account/address`} className={getLinkClass("/user/account/address")}>
-					Alamat
-				</Link>
+				{user?.role_category.roleName !== "admin" && (
+					<>
+						<span className="text-gray-300">|</span>
+						<Link to={`/user/account/address`} className={getLinkClass("/user/account/address")}>
+							Alamat
+						</Link>
+					</>
+				)}
 			</div>
-			<div className="mt-4 p-2 px-4 bg-white rounded shadow-sm">
+			<div
+				className={`mt-4 bg-white rounded shadow-sm ${
+					location.pathname !== "/user/account/profile" ? "p-2 px-4" : ""
+				}`}
+			>
 				<Outlet />
 			</div>
 		</>

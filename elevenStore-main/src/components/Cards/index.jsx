@@ -123,16 +123,18 @@ export default function Cards(props) {
 								<span className="text-xl font-semibold text-gray-900">
 									{formatter.format(product?.price)}
 								</span>
-								<Button
-									type="button"
-									onClick={(e) => {
-										e.preventDefault();
-										handleCart(product);
-									}}
-									primary
-								>
-									+ Keranjang
-								</Button>
+								{user?.role_category.roleName !== "admin" && (
+									<Button
+										type="button"
+										onClick={(e) => {
+											e.preventDefault();
+											handleCart(product);
+										}}
+										primary
+									>
+										+ Keranjang
+									</Button>
+								)}
 							</div>
 						</div>
 					</div>
