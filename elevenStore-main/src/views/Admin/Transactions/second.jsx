@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CustomButton from "components/Button";
-import { Button } from "@mui/material";
+import { Divider } from "@mui/material";
 import axios from "axios";
 import MUIDataTable from "mui-datatables";
 import CustomModal from "components/Modal";
-import { Popover, Typography } from "@mui/material";
 
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
-import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
+import PaidImage from "../../../assets/images/paid.webp";
+import RejectedImage from "../../../assets/images/rejected.jpg";
+import PendingImage from "../../../assets/images/pending.jpg";
 
 import Swal from "sweetalert2";
 import moment from "moment";
 import "moment/locale/id";
-import { formatter } from "utils/useFormatter";
+import { formatPhoneNumber, formatter } from "utils/useFormatter";
 
 moment.locale("id");
 
@@ -32,11 +28,32 @@ const columns = [
 		},
 	},
 	{
+		name: "createdAt",
+		label: "Transaction Date",
+		options: {
+			filter: false,
+			sort: false,
+		},
+	},
+	{
 		name: "invoice",
 		label: "Invoice",
 		options: {
 			filter: false,
 			sort: false,
+			customBodyRender: (value) => {
+				const invoice = value[0].invoice;
+				return (
+					<button
+						className="underline hover:text-blue-500 whitespace-nowrap"
+						autoFocus={false}
+						onClick={() => value[1](value[0])}
+					>
+						{"#"}
+						{invoice}
+					</button>
+				);
+			},
 		},
 	},
 	{
@@ -134,6 +151,8 @@ export default function Transactions() {
 	const [transactions, setTransactions] = useState([]);
 	const [openProofOfPaymentModal, setOpenProofOfPaymentModal] = useState(false);
 	const [selectedProofOfPayment, setSelectedProofOfPayment] = useState("");
+	const [openInvoiceModal, setOpenInvoiceModal] = useState(false);
+	const [selectedInvoice, setSelectedInvoice] = useState("");
 
 	const options = {
 		selectableRowsHeader: false,
@@ -160,13 +179,26 @@ export default function Transactions() {
 		},
 	};
 
+	const handleEscKey = (event) => {
+		if (event.key === "Escape") {
+			handleProofOfPaymentClose();
+			handleInvoiceClose();
+		}
+	};
+
 	useEffect(() => {
 		getTransactions();
+
+		document.addEventListener("keydown", handleEscKey);
+
+		return () => {
+			document.removeEventListener("keydown", handleEscKey);
+		};
 	}, []);
 
 	const getTransactions = async () => {
 		const response = await axios.get(`${process.env.REACT_APP_MY_API}/checkout`);
-		const data = response.data;
+		const data = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 		setTransactions(
 			Object.values(
 				data.reduce((acc, primary) => {
@@ -182,6 +214,7 @@ export default function Transactions() {
 		);
 	};
 
+	// Proof Of Payment
 	const handleProofOfPaymentClick = (proofOfPayment) => {
 		setSelectedProofOfPayment(proofOfPayment);
 		setOpenProofOfPaymentModal(true);
@@ -189,6 +222,19 @@ export default function Transactions() {
 
 	const handleProofOfPaymentClose = () => {
 		setOpenProofOfPaymentModal(false);
+		setSelectedProofOfPayment("");
+	};
+
+	// Invoice
+	const handleInvoiceClick = (invoice) => {
+		setSelectedInvoice(invoice);
+		console.log(invoice);
+		setOpenInvoiceModal(true);
+	};
+
+	const handleInvoiceClose = () => {
+		setOpenInvoiceModal(false);
+		setSelectedInvoice("");
 	};
 
 	const handleStatusReject = (value) => {
@@ -263,7 +309,8 @@ export default function Transactions() {
 						title={"List of Transactions"}
 						data={transactions.map((e) => ({
 							uuid: e.uuid,
-							invoice: e.invoice,
+							createdAt: moment(e.createdAt).format("LLLL"),
+							invoice: [e, handleInvoiceClick],
 							name: e.user.name,
 							product: e.cart
 								.flatMap((c) => c.product)
@@ -280,30 +327,243 @@ export default function Transactions() {
 					/>
 				</ThemeProvider>
 			</div>
+
 			{/* Modal for proof of payment */}
-			<CustomModal open={openProofOfPaymentModal} handleClose={handleProofOfPaymentClose}>
-				{selectedProofOfPayment &&
-					selectedProofOfPayment.fileUrl &&
-					(selectedProofOfPayment.fileUrl.toLowerCase().endsWith(".pdf") ? null : (
-						<div className="relative">
-							<div className="absolute right-0 -top-10">
-								<Button
-									sx={{ color: "red", outlineColor: "red" }}
-									aria-label="changeImage"
-									startIcon={<HighlightOffIcon fontSize="large" />}
-									onClick={handleProofOfPaymentClose}
-								>
-									Close
-								</Button>
+			{selectedProofOfPayment && (
+				<CustomModal open={openProofOfPaymentModal} handleClose={handleProofOfPaymentClose}>
+					{selectedProofOfPayment.fileUrl &&
+						(selectedProofOfPayment.fileUrl.toLowerCase().endsWith(".pdf") ? null : (
+							<div className="relative w-[98vw] h-[98vh] overflow-auto bg-blue-900/10 shadow-lg border border-white/50 rounded-lg p-4 backdrop-blur-sm">
+								<div className="sticky top-0 right-0 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg mb-2">
+									<div className="px-4 py-2 flex justify-between items-center">
+										<span className="inline-flex">
+											<p className="font-bold">Proof Of Payment</p> :{" "}
+											{selectedProofOfPayment.invoice}
+										</span>
+										<button
+											onClick={handleProofOfPaymentClose}
+											className="text-sm text-gray-400 cursor-pointer text-center self-center p-2 border rounded bg-gray-100/50"
+										>
+											ESC
+										</button>
+									</div>
+								</div>
+								<img
+									src={selectedProofOfPayment.fileUrl}
+									alt="Proof of Payment"
+									style={{ width: "100%", height: "100%", objectFit: "contain" }}
+								/>{" "}
 							</div>
-							<img
-								src={selectedProofOfPayment.fileUrl}
-								alt="Proof of Payment"
-								style={{ width: "100%", height: "100%", objectFit: "contain" }}
-							/>{" "}
+						))}
+				</CustomModal>
+			)}
+
+			{/* Modal for invoice */}
+			{selectedInvoice && (
+				<CustomModal open={openInvoiceModal} handleClose={handleInvoiceClose}>
+					<div className="relative w-[98vw] h-[98vh] overflow-auto bg-blue-900/10 shadow-lg border border-white/50 rounded-lg p-4 backdrop-blur-sm">
+						<div className="sticky top-0 right-0 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg mb-2">
+							<div className="px-4 py-2 flex justify-end">
+								<button
+									onClick={handleInvoiceClose}
+									className="text-sm text-gray-400 cursor-pointer text-center self-center p-2 border rounded bg-gray-100/50"
+								>
+									ESC
+								</button>
+							</div>
 						</div>
-					))}
-			</CustomModal>
+						<div className="flex flex-col gap-4 h-full">
+							<div className="bg-white p-4 rounded-lg shadow-lg">
+								<h1 className="mb-2 font-bold">Transaction Details</h1>
+								<Divider />
+								<div className="mt-2 flex gap-4 whitespace-nowrap">
+									<span className="font-bold leading-7">
+										<h2>Invoice</h2>
+										<h2>Payment Method</h2>
+										<h2>Purchase Date</h2>
+										<h2>Transaction Status</h2>
+									</span>
+									<span className="leading-7">
+										<p>
+											{":"}&nbsp;{selectedInvoice.invoice}
+										</p>
+										<p>
+											{":"}&nbsp;{selectedInvoice.payment_method.paymentName}
+										</p>
+										<p>
+											{":"}&nbsp;{moment(selectedInvoice?.createdAt).format("LLLL")}
+										</p>
+										<p>
+											{":"}&nbsp;
+											{selectedInvoice.status === null ? (
+												<span className="bg-gradient-to-tl from-yellow-600 to-amber-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+													Pending
+												</span>
+											) : selectedInvoice.status === false ? (
+												<div className="bg-gradient-to-tl from-red-600 to-rose-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+													Rejected
+												</div>
+											) : (
+												<div className="bg-gradient-to-tl from-green-600 to-lime-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+													Paid
+												</div>
+											)}
+										</p>
+									</span>
+								</div>
+							</div>
+							<div className="bg-white p-4 rounded-lg shadow-lg">
+								<h1 className="mb-2 font-bold">Account Details</h1>
+								<Divider />
+								<div className="mt-2 flex gap-4 whitespace-nowrap">
+									<span className="font-bold leading-7">
+										<h2>Name</h2>
+										<h2>Email</h2>
+									</span>
+									<span className="leading-7">
+										<p>
+											{":"}&nbsp;{selectedInvoice.user.name}
+										</p>
+										<p>
+											{":"}&nbsp;{selectedInvoice.user.email}
+										</p>
+									</span>
+								</div>
+							</div>
+							<div className="bg-white p-4 rounded-lg shadow-lg">
+								<h1 className="mb-2 font-bold">Shipping Information</h1>
+								<Divider />
+								<div className="mt-2 flex gap-4 whitespace-nowrap">
+									<span className="font-bold leading-7">
+										<h2>Recipient's Name</h2>
+										<h2>Phone Number</h2>
+										<h2>Courir</h2>
+										<h2>Tracking ID</h2>
+										<h2>Address</h2>
+										{selectedInvoice.address.detailLainnya && <h2>Detailed/Benchmark Address</h2>}
+									</span>
+									<span className="leading-7">
+										<p>
+											{":"}&nbsp;{selectedInvoice.address.name}
+										</p>
+										<p>
+											{":"}&nbsp;{formatPhoneNumber(selectedInvoice?.address?.phoneNumber)}
+										</p>
+										<p>
+											{":"}&nbsp;{selectedInvoice.ekspedisi}
+										</p>
+										<p>
+											{":"}&nbsp;{selectedInvoice.trackingId}
+										</p>
+										<p>
+											{":"}&nbsp;{selectedInvoice.address.detailAddress}
+										</p>
+										{selectedInvoice.address.detailLainnya && (
+											<p>
+												{":"}&nbsp;{selectedInvoice.address.detailLainnya}
+											</p>
+										)}
+									</span>
+								</div>
+							</div>
+							<div className="bg-white p-4 rounded-lg shadow-lg">
+								<div className="my-4 flex flex-row gap-12">
+									<div>
+										<h1 className="text-xl font-bold text-blue-500">INVOICE</h1>
+										<p>
+											{"#"}
+											{selectedInvoice?.invoice}
+										</p>
+										<p>{moment(selectedInvoice?.createdAt).format("LLLL")}</p>
+										<div className="mt-20">
+											<h1 className="text-gray-400">Client Details</h1>
+											<p>
+												{selectedInvoice?.user?.name} / {selectedInvoice?.address?.name}
+											</p>
+											<p>{formatPhoneNumber(selectedInvoice?.address?.phoneNumber)}</p>
+											<p>{selectedInvoice?.user?.email}</p>
+											<p>{selectedInvoice?.address?.detailAddress}</p>
+										</div>
+									</div>
+									<div className="grow flex justify-end">
+										<div className="text-end">
+											<h1 className="text-gray-400">Payment Method</h1>
+											<p>
+												{selectedInvoice?.payment_method.paymentName} (
+												{selectedInvoice?.payment_method.name})
+											</p>
+											<p>No Rekening : {selectedInvoice?.payment_method.norek}</p>
+											<div className="flex justify-end">
+												<img
+													src={
+														selectedInvoice?.status === null
+															? PendingImage
+															: selectedInvoice.status === true
+															? PaidImage
+															: RejectedImage
+													}
+													alt="payment"
+													className="h-32 w-32"
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<Divider className="pt-2" />
+								<div className="flex justify-center mt-10">
+									<table className="w-full text-left table-auto print:text-sm" id="table-items">
+										<thead>
+											<tr className="text-white bg-gray-700 print:bg-gray-300 print:text-black">
+												<th className="px-4 py-2">Item</th>
+												<th className="px-4 py-2 text-right">Qty</th>
+												<th className="px-4 py-2 text-right">Unit Price</th>
+												<th className="px-4 py-2 text-right">Subtotal</th>
+											</tr>
+										</thead>
+										<tbody>
+											{selectedInvoice?.cart.map((lc, idx) => (
+												<tr key={idx}>
+													<td className="px-4 py-2 border">{lc?.product.nameProduct}</td>
+													<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
+														{lc?.quantity}
+													</td>
+													<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
+														{formatter.format(lc?.product.price)}
+													</td>
+													<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
+														{formatter.format(lc?.subtotal)}
+													</td>
+												</tr>
+											))}
+											<tr className="bg-gray-100">
+												<td className="invisible"></td>
+												<td className="invisible"></td>
+												<td className="px-4 py-2 font-extrabold text-right border">Ongkir</td>
+												<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
+													{formatter.format(selectedInvoice?.shippingCost)}
+												</td>
+											</tr>
+											<tr className="bg-gray-100">
+												<td className="invisible"></td>
+												<td className="invisible"></td>
+												<td className="px-4 py-2 font-extrabold text-right border">Total</td>
+												<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
+													{formatter.format(
+														selectedInvoice?.cart.reduce(
+															(total, item) => total + item.subtotal,
+															0
+														) + selectedInvoice?.shippingCost
+													)}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</CustomModal>
+			)}
 		</>
 	);
 }
