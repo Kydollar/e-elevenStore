@@ -11,6 +11,7 @@ import { Popover, Typography } from "@mui/material";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import ModeEditRoundedIcon from "@mui/icons-material/ModeEditRounded";
 
 import Swal from "sweetalert2";
 import moment from "moment";
@@ -108,32 +109,12 @@ const columns = [
 			sort: false,
 			customBodyRender: (value) => {
 				return (
-					<div className="flex flex-col gap-2 justify-center items-start">
-						{value[0] === null ? (
-							<>
-								{/* <Button
-									sx={{ fontSize: "0.75rem" }}
-									variant="outlined"
-									aria-label="changeStatus"
-									startIcon={<ChangeCircleIcon fontSize="large" />}
-									onClick={value[6]}
-								>
-									Change
-								</Button> */}
-								<button
-									className="bg-gradient-to-tl from-red-600 to-rose-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white"
-									onClick={() => value[2](value[1])}
-								>
-									Reject
-								</button>
-								<button
-									className="bg-gradient-to-tl from-green-600 to-lime-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white"
-									onClick={() => value[3](value[1])}
-								>
-									Approve
-								</button>
-							</>
-						) : value[0] === false ? (
+					<>
+						{value === null ? (
+							<span className="bg-gradient-to-tl from-yellow-600 to-amber-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+								Pending
+							</span>
+						) : value === false ? (
 							<div className="bg-gradient-to-tl from-red-600 to-rose-400 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
 								Rejected
 							</div>
@@ -142,7 +123,7 @@ const columns = [
 								Paid
 							</div>
 						)}
-					</div>
+					</>
 				);
 			},
 		},
@@ -156,8 +137,27 @@ export default function Transactions() {
 
 	const options = {
 		selectableRowsHeader: false,
+		selectableRows: "single",
 		responsive: "standard",
-		selectableRowsHideCheckboxes: true,
+		customToolbarSelect: (selectedRows, displayData) => {
+			const invoice = displayData[selectedRows.data[0].index].data[1];
+			return (
+				<div className="flex gap-2 mr-6">
+					<button
+						className="bg-gradient-to-tl from-red-600 to-rose-400 hover:to-red-600 hover:from-rose-400 hover:opacity-50 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white"
+						onClick={() => handleStatusReject(invoice)}
+					>
+						Reject
+					</button>
+					<button
+						className="bg-gradient-to-tl from-green-600 to-lime-400 hover:to-green-600 hover:from-lime-400 hover:opacity-50 px-2.5 text-xs rounded-lg py-1.5 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white"
+						onClick={() => handleStatusApprove(invoice)}
+					>
+						Approve
+					</button>
+				</div>
+			);
+		},
 	};
 
 	useEffect(() => {
@@ -194,7 +194,7 @@ export default function Transactions() {
 	const handleStatusReject = (value) => {
 		updateStatusByInvoice(value, false); // Call the function to update status with value and status = false
 	};
-	
+
 	const handleStatusApprove = (value) => {
 		updateStatusByInvoice(value, true); // Call the function to update status with value and status = true
 	};
@@ -273,12 +273,7 @@ export default function Transactions() {
 								e.cart.flatMap((c) => c.subtotal).reduce((acc, curr) => acc + curr, 0) +
 								e.shippingCost,
 							proofOfPayment: [e?.proof_of_payment, handleProofOfPaymentClick],
-							status: [
-								e?.status,
-								e?.invoice,
-								handleStatusReject,
-								handleStatusApprove,
-							],
+							status: e?.status,
 						}))}
 						columns={columns}
 						options={options}
