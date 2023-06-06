@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import db from "./config/Database.js";
 import SequelizeStore from "connect-session-sequelize";
 import FileUpload from "express-fileupload";
@@ -15,6 +16,7 @@ import AddressRoute from "./app/routes/AddressRoute.js";
 import TransactionRoute from "./app/routes/TransactionRoute.js";
 import PaymentMethodRoute from "./app/routes/PaymentMethodRoute.js";
 import ProofOfPaymentRoute from "./app/routes/ProofOfPaymentRoute.js";
+import NodemailerRoute from "./app/routes/NodemailerRoute.js";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 dotenv.config();
@@ -55,6 +57,7 @@ app.use(
 app.use(express.json());
 app.use(FileUpload());
 app.use(express.static("public"));
+app.use(cookieParser());
 app.use(apiRoute, UserRoute);
 app.use(apiRoute, ProductsRoute);
 app.use(apiRoute, CartRoute);
@@ -65,6 +68,7 @@ app.use(apiRoute, ProofOfPaymentRoute);
 app.use(apiRoute, RoleCategory);
 app.use(apiRoute, ProductCategory);
 app.use(apiRoute, AddressRoute);
+app.use(apiRoute, NodemailerRoute);
 
 app.use(
 	"/api",
@@ -73,7 +77,7 @@ app.use(
 		changeOrigin: true,
 		headers: {
 			"Content-Type": "application/json",
-			"key": "a3d20f99ea0ac3cdc859eb7fabae576d", // Ganti dengan API key RajaOngkir Anda
+			key: "a3d20f99ea0ac3cdc859eb7fabae576d", // Ganti dengan API key RajaOngkir Anda
 		},
 	})
 );

@@ -141,7 +141,7 @@ export default function LoginSecond(props) {
 					<FormHelperText error>{errors.password?.message}</FormHelperText>
 				</FormControl>
 				<span className="flex items-center justify-end text-sm text-gray-500">
-					<Link to="/lupa-password" className="hover:text-blue-600 transition-all">
+					<Link to="/forgot-password" className="hover:text-blue-600 transition-all">
 						Lupa password?
 					</Link>
 				</span>

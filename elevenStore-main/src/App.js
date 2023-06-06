@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./views/Auth/Login";
 import Register from "./views/Auth/Register";
+import ForgotPassword from "./views/Auth/ForgotPassword";
 import Dashboard from "./views/Dashboard";
 import Products from "views/Products";
 import Layout from "components/Layout";
@@ -43,7 +44,7 @@ function App() {
 					<Route
 						path="/user/account"
 						element={
-							<ProtectedRoute role="user">
+							<ProtectedRoute>
 								<Account />
 							</ProtectedRoute>
 						}
@@ -196,6 +197,7 @@ function App() {
 					/>
 				</Route>
 				<Route path="/login" element={<Login />} />
+				<Route path="/forgot-password" element={<ForgotPassword />} />
 				<Route path="/register" element={<Register />} />
 			</Routes>
 		</BrowserRouter>
