@@ -441,19 +441,19 @@ const BillingHistory = () => {
 											</td>
 										</tr>
 									))}
-									<tr class="bg-gray-100">
-										<td class="invisible"></td>
-										<td class="invisible"></td>
-										<td class="px-4 py-2 font-extrabold text-right border">Ongkir</td>
-										<td class="px-4 py-2 text-right border tabular-nums slashed-zero">
+									<tr className="bg-gray-100">
+										<td className="invisible"></td>
+										<td className="invisible"></td>
+										<td className="px-4 py-2 font-extrabold text-right border">Ongkir</td>
+										<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
 											{formatter.format(lastCombinedData?.shippingCost)}
 										</td>
 									</tr>
-									<tr class="bg-gray-100">
-										<td class="invisible"></td>
-										<td class="invisible"></td>
-										<td class="px-4 py-2 font-extrabold text-right border">Total</td>
-										<td class="px-4 py-2 text-right border tabular-nums slashed-zero">
+									<tr className="bg-gray-100">
+										<td className="invisible"></td>
+										<td className="invisible"></td>
+										<td className="px-4 py-2 font-extrabold text-right border">Total</td>
+										<td className="px-4 py-2 text-right border tabular-nums slashed-zero">
 											{formatter.format(
 												lastCombinedData?.cart.reduce((total, item) => total + item.subtotal, 0) +
 													lastCombinedData?.shippingCost

@@ -159,7 +159,7 @@ export default function Transactions() {
 		selectableRows: "single",
 		responsive: "standard",
 		customToolbarSelect: (selectedRows, displayData) => {
-			const invoice = displayData[selectedRows.data[0].index].data[1];
+			const invoice = displayData[selectedRows.data[0].index].data[2].props.children[1];
 			return (
 				<div className="flex gap-2 mr-6">
 					<button
@@ -228,7 +228,6 @@ export default function Transactions() {
 	// Invoice
 	const handleInvoiceClick = (invoice) => {
 		setSelectedInvoice(invoice);
-		console.log(invoice);
 		setOpenInvoiceModal(true);
 	};
 

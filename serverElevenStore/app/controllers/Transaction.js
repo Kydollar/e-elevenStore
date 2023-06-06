@@ -137,25 +137,47 @@ export const getCheckouts = async (req, res) => {
 
 export const updateCheckoutStatusByInvoice = async (req, res) => {
 	try {
-		const invoices = req.params.invoice; // Menggunakan "invoices" (plural) sebagai nama variabel untuk mewakili parameter yang mungkin berisi beberapa invoice
-
+		const invoices = req.params.invoice;
 		const { status } = req.body;
 
-		// Mencari semua checkout yang sesuai dengan invoice-invoice yang diberikan
 		const checkouts = await Transaction.findAll({
 			where: {
-				invoice: invoices, // Menggunakan "invoices" (plural) untuk mencocokkan multiple invoice
+				invoice: invoices,
 			},
+			include: { model: Cart },
 		});
 
 		if (checkouts.length === 0) {
 			return res.status(404).json({ msg: "Checkout tidak ditemukan" });
 		}
 
-		// Mengupdate status checkout untuk setiap checkout yang ditemukan
 		await Promise.all(
 			checkouts.map(async (checkout) => {
-				await checkout.update({ status: status });
+				await checkout.update({ status });
+
+				if (status === true) {
+					const cartItem = checkout.cart;
+
+					const product = await Products.findOne({
+						where: {
+							uuid: cartItem.productUuid,
+						},
+					});
+
+					if (product) {
+						const updatedStock = product.stock - cartItem.quantity;
+						await Products.update(
+							{
+								stock: updatedStock,
+							},
+							{
+								where: {
+									uuid: cartItem.productUuid,
+								},
+							}
+						);
+					}
+				}
 			})
 		);
 
