@@ -18,7 +18,9 @@ function CartMenu(props) {
 
 		const getCart = async () => {
 			try {
-				const response = await axios.get(`${process.env.REACT_APP_MY_API}/cart/${userUuid}?statusActive=true`);
+				const response = await axios.get(
+					`${process.env.REACT_APP_MY_API}/cart/${userUuid}?statusActive=true`
+				);
 				setCart(response.data);
 			} catch (error) {
 				console.error("Error fetching cart:", error);
@@ -40,6 +42,7 @@ function CartMenu(props) {
 	return (
 		<Menu
 			anchorEl={anchorElCart}
+			sx={{ top: "3rem" }}
 			anchorOrigin={{
 				vertical: "top",
 				horizontal: "right",

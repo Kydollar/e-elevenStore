@@ -19,6 +19,7 @@ function ProfileMenu(props) {
 	return (
 		<Menu
 			anchorEl={anchorElProfile}
+			sx={{ top: "3rem" }}
 			anchorOrigin={{
 				vertical: "top",
 				horizontal: "right",
