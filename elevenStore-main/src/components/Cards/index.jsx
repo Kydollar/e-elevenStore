@@ -17,230 +17,197 @@ import "swiper/css/pagination";
 import { FreeMode, Pagination } from "swiper";
 
 export default function Cards(props) {
-	const { products, category, isCarousel } = props;
-	const [openModalLogin, setOpenModalLogin] = useState(false);
+  const { products, category, isCarousel } = props;
+  const [openModalLogin, setOpenModalLogin] = useState(false);
 
-	const { user } = useSelector((state) => state.auth);
-	const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
-	const handleOpenLogin = () => {
-		setOpenModalLogin(true);
-	};
+  const handleOpenLogin = () => {
+    setOpenModalLogin(true);
+  };
 
-	const handleCloseLogin = () => {
-		setOpenModalLogin(false);
-	};
+  const handleCloseLogin = () => {
+    setOpenModalLogin(false);
+  };
 
-	const handleCart = (product, redirect) => {
-		if (user) {
-			const apiUrl = `${process.env.REACT_APP_MY_API}/cart`;
+  const handleCart = (product, redirect) => {
+    if (user) {
+      const apiUrl = `${process.env.REACT_APP_MY_API}/cart`;
 
-			try {
-				const formData = new FormData();
-				formData.append("productUuid", product.uuid);
-				formData.append("desc", "mock desc");
-				formData.append("quantity", 1);
-				formData.append("subtotal", product.price);
+      try {
+        const formData = new FormData();
+        formData.append("productUuid", product.uuid);
+        formData.append("desc", "mock desc");
+        formData.append("quantity", 1);
+        formData.append("subtotal", product.price);
 
-				axios
-					.post(apiUrl, formData, {
-						headers: {
-							"Content-Type": "multipart/form-data",
-						},
-					})
-					.then(() => {
-						Swal.fire({
-							title: "Berhasil",
-							text: "Product berhasil dimasukkan kekeranjang!",
-							icon: "success",
-							backdrop: "backdrop-filter backdrop-blur-lg",
-							showCancelButton: true,
-							cancelButtonText: "Lanjut Belanja",
-							confirmButtonText: "Lihat Keranjang",
-						}).then((result) => {
-							if (result.dismiss === Swal.DismissReason.cancel) {
-								// window.location.reload();
-							} else if (result.isConfirmed) {
-								// User clicked "Billing History"
-								navigate("/cart", { replace: false });
-							}
-						});
-					});
-			} catch (error) {
-				if (error.response) {
-					console.log(error.response);
-				}
-			}
-		} else {
-			handleOpenLogin();
-		}
-	};
+        axios
+          .post(apiUrl, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then(() => {
+            Swal.fire({
+              title: "Berhasil",
+              text: "Product berhasil dimasukkan kekeranjang!",
+              icon: "success",
+              backdrop: "backdrop-filter backdrop-blur-lg",
+              showCancelButton: true,
+              cancelButtonText: "Lanjut Belanja",
+              confirmButtonText: "Lihat Keranjang",
+            }).then((result) => {
+              if (result.dismiss === Swal.DismissReason.cancel) {
+                // window.location.reload();
+              } else if (result.isConfirmed) {
+                // User clicked "Billing History"
+                navigate("/cart", { replace: false });
+              }
+            });
+          });
+      } catch (error) {
+        if (error.response) {
+          console.log(error.response);
+        }
+      }
+    } else {
+      handleOpenLogin();
+    }
+  };
 
-	return (
-		<>
-			{isCarousel ? (
-				<>
-					<Swiper
-						slidesPerView={3}
-						spaceBetween={30}
-						freeMode={true}
-						pagination={{
-							clickable: true,
-						}}
-						modules={[FreeMode, Pagination]}
-						className="mySwiper"
-					>
-						{products?.map((product, index) => (
-							<SwiperSlide key={product?.uuid + index}>
-								<NavLink
-									as="div"
-									to={{
-										pathname: category
-											? `/products/${category.productCategoryName}/${product?.uuid}`
-											: `/products/${product?.product_category?.productCategoryName}/${product?.uuid}`,
-									}}
-								>
-									<div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
-										<div className="mb-4">
-											<img
-												className="w-[300px] h-[300px] object-cover object-center bg-white"
-												src={product?.imageUrl}
-												alt={product?.nameProduct}
-											/>
-										</div>
-										<div className="px-5 pb-5">
-											<div className="flex flex-col items-start justify-center">
-												<h5 className="text-xl font-semibold tracking-tight text-gray-900">
-													{product?.nameProduct}
-												</h5>
-												{category ? (
-													<h4 className="text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
-														{category?.productCategoryName.charAt(0).toUpperCase() +
-															category.productCategoryName.slice(1)}
-													</h4>
-												) : (
-													<Link
-														to={{
-															pathname: `${product?.product_category?.productCategoryName}`,
-														}}
-													>
-														<h4 className="cursor-pointer text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
-															{product?.product_category.productCategoryName
-																.charAt(0)
-																.toUpperCase() +
-																product?.product_category?.productCategoryName.slice(1)}
-														</h4>
-													</Link>
-												)}
-											</div>
-											<div className="flex items-center mt-2.5 mb-5">
-												<h4 className="text-md font-normal tracking-tight text-gray-500">
-													Stok&nbsp;:&nbsp;
-												</h4>
-												<span className="bg-blue-100 text-blue-800 text-xs font-medium py-1 px-2 rounded">
-													{product?.stock}
-												</span>
-											</div>
-											<div className="flex items-center justify-between">
-												<span className="text-xl font-semibold text-gray-900">
-													{formatter.format(product?.price)}
-												</span>
-												{user?.role_category.roleName !== "admin" && (
-													<Button
-														type="button"
-														onClick={(e) => {
-															e.preventDefault();
-															handleCart(product);
-														}}
-														primary
-													>
-														+ Keranjang
-													</Button>
-												)}
-											</div>
-										</div>
-									</div>
-								</NavLink>
-							</SwiperSlide>
-						))}
-					</Swiper>
-				</>
-			) : (
-				products?.map((product, index) => (
-					<NavLink
-						as="div"
-						key={product?.uuid + index}
-						to={{
-							pathname: category
-								? `/products/${category.productCategoryName}/${product?.uuid}`
-								: `/products/${product?.product_category?.productCategoryName}/${product?.uuid}`,
-						}}
-					>
-						<div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
-							<div className="mb-4">
-								<img
-									className="w-[300px] h-[300px] object-cover object-center bg-white"
-									src={product?.imageUrl}
-									alt={product?.nameProduct}
-								/>
-							</div>
-							<div className="px-5 pb-5">
-								<div className="flex flex-col items-start justify-center">
-									<h5 className="text-xl font-semibold tracking-tight text-gray-900">
-										{product?.nameProduct}
-									</h5>
-									{category ? (
-										<h4 className="text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
-											{category?.productCategoryName.charAt(0).toUpperCase() +
-												category.productCategoryName.slice(1)}
-										</h4>
-									) : (
-										<Link
-											to={{
-												pathname: `${product?.product_category?.productCategoryName}`,
-											}}
-										>
-											<h4 className="cursor-pointer text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
-												{product?.product_category.productCategoryName.charAt(0).toUpperCase() +
-													product?.product_category?.productCategoryName.slice(1)}
-											</h4>
-										</Link>
-									)}
-								</div>
-								<div className="flex items-center mt-2.5 mb-5">
-									<h4 className="text-md font-normal tracking-tight text-gray-500">
-										Stok&nbsp;:&nbsp;
-									</h4>
-									<span className="bg-blue-100 text-blue-800 text-xs font-medium py-1 px-2 rounded">
-										{product?.stock}
-									</span>
-								</div>
-								<div className="flex items-center justify-between">
-									<span className="text-xl font-semibold text-gray-900">
-										{formatter.format(product?.price)}
-									</span>
-									{user?.role_category.roleName !== "admin" && (
-										<Button
-											type="button"
-											onClick={(e) => {
-												e.preventDefault();
-												handleCart(product);
-											}}
-											primary
-										>
-											+ Keranjang
-										</Button>
-									)}
-								</div>
-							</div>
-						</div>
-					</NavLink>
-				))
-			)}
-			<CustomModal open={openModalLogin} handleClose={handleCloseLogin}>
-				{/* Modal Content */}
-				<Login handleCloseLogin={handleCloseLogin} />
-			</CustomModal>
-		</>
-	);
+  const filteredProducts = products
+    .slice()
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 9);
+
+  return (
+    <>
+      {isCarousel ? (
+        <>
+          <Swiper
+            slidesPerView={4}
+            spaceBetween={30}
+            freeMode={true}
+            pagination={{
+              clickable: true,
+            }}
+            modules={[FreeMode, Pagination]}
+            className="mySwiper pb-10"
+          >
+            {filteredProducts?.map((product, index) => (
+              <SwiperSlide key={product?.uuid + index}>
+                <NavLink
+                  as="div"
+                  to={{
+                    pathname: category ? `/products/${category.productCategoryName}/${product?.uuid}` : `/products/${product?.product_category?.productCategoryName}/${product?.uuid}`,
+                  }}
+                >
+                  <div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+                    <div className="mb-4 flex justify-center items-center">
+                      <img className="w-[300px] h-[300px] object-cover object-center bg-white" src={product?.imageUrl} alt={product?.nameProduct} />
+                    </div>
+                    <div className="px-5 pb-5">
+                      <div className="flex flex-col items-start justify-center">
+                        <h5 className="text-xl font-semibold tracking-tight text-gray-900">{product?.nameProduct}</h5>
+                        {category ? (
+                          <h4 className="text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">{category?.productCategoryName.charAt(0).toUpperCase() + category.productCategoryName.slice(1)}</h4>
+                        ) : (
+                          <Link
+                            to={{
+                              pathname: `${product?.product_category?.productCategoryName}`,
+                            }}
+                          >
+                            <h4 className="cursor-pointer text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
+                              {product?.product_category.productCategoryName.charAt(0).toUpperCase() + product?.product_category?.productCategoryName.slice(1)}
+                            </h4>
+                          </Link>
+                        )}
+                      </div>
+                      <div className="flex items-center mt-2.5 mb-5">
+                        <h4 className="text-md font-normal tracking-tight text-gray-500">Stok&nbsp;:&nbsp;</h4>
+                        <span className="bg-blue-100 text-blue-800 text-xs font-medium py-1 px-2 rounded">{product?.stock}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-semibold text-gray-900">{formatter.format(product?.price)}</span>
+                        {user?.role_category.roleName !== "admin" && (
+                          <Button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleCart(product);
+                            }}
+                            primary
+                          >
+                            + Keranjang
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </NavLink>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </>
+      ) : (
+        products?.map((product, index) => (
+          <NavLink
+            as="div"
+            key={product?.uuid + index}
+            to={{
+              pathname: category ? `/products/${category.productCategoryName}/${product?.uuid}` : `/products/${product?.product_category?.productCategoryName}/${product?.uuid}`,
+            }}
+          >
+            <div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+              <div className="mb-4">
+                <img className="w-[300px] h-[300px] object-cover object-center bg-white" src={product?.imageUrl} alt={product?.nameProduct} />
+              </div>
+              <div className="px-5 pb-5">
+                <div className="flex flex-col items-start justify-center">
+                  <h5 className="text-xl font-semibold tracking-tight text-gray-900">{product?.nameProduct}</h5>
+                  {category ? (
+                    <h4 className="text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">{category?.productCategoryName.charAt(0).toUpperCase() + category.productCategoryName.slice(1)}</h4>
+                  ) : (
+                    <Link
+                      to={{
+                        pathname: `${product?.product_category?.productCategoryName}`,
+                      }}
+                    >
+                      <h4 className="cursor-pointer text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
+                        {product?.product_category.productCategoryName.charAt(0).toUpperCase() + product?.product_category?.productCategoryName.slice(1)}
+                      </h4>
+                    </Link>
+                  )}
+                </div>
+                <div className="flex items-center mt-2.5 mb-5">
+                  <h4 className="text-md font-normal tracking-tight text-gray-500">Stok&nbsp;:&nbsp;</h4>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium py-1 px-2 rounded">{product?.stock}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-semibold text-gray-900">{formatter.format(product?.price)}</span>
+                  {user?.role_category.roleName !== "admin" && (
+                    <Button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleCart(product);
+                      }}
+                      primary
+                    >
+                      + Keranjang
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </NavLink>
+        ))
+      )}
+      <CustomModal open={openModalLogin} handleClose={handleCloseLogin}>
+        {/* Modal Content */}
+        <Login handleCloseLogin={handleCloseLogin} />
+      </CustomModal>
+    </>
+  );
 }
