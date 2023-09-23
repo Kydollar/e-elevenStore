@@ -77,9 +77,9 @@ export default function Cards(props) {
   };
 
   const filteredProducts = products
-    .slice()
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 9);
+    ?.slice()
+    ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    ?.slice(0, 9);
 
   return (
     <>
@@ -119,7 +119,7 @@ export default function Cards(props) {
                             }}
                           >
                             <h4 className="cursor-pointer text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
-                              {product?.product_category.productCategoryName.charAt(0).toUpperCase() + product?.product_category?.productCategoryName.slice(1)}
+                              {product?.product_category.productCategoryName.charAt(0).toUpperCase() + product?.product_category?.productCategoryName?.slice(1)}
                             </h4>
                           </Link>
                         )}
@@ -130,7 +130,7 @@ export default function Cards(props) {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xl font-semibold text-gray-900">{formatter.format(product?.price)}</span>
-                        {user?.role_category.roleName !== "admin" && (
+                        {user?.role_category?.roleName !== "admin" && (
                           <Button
                             type="button"
                             onClick={(e) => {
@@ -167,7 +167,7 @@ export default function Cards(props) {
                 <div className="flex flex-col items-start justify-center">
                   <h5 className="text-xl font-semibold tracking-tight text-gray-900">{product?.nameProduct}</h5>
                   {category ? (
-                    <h4 className="text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">{category?.productCategoryName.charAt(0).toUpperCase() + category.productCategoryName.slice(1)}</h4>
+                    <h4 className="text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">{category?.productCategoryName.charAt(0).toUpperCase() + category.productCategoryName?.slice(1)}</h4>
                   ) : (
                     <Link
                       to={{
@@ -175,7 +175,7 @@ export default function Cards(props) {
                       }}
                     >
                       <h4 className="cursor-pointer text-md font-normal tracking-tight text-gray-500 hover:text-blue-900">
-                        {product?.product_category.productCategoryName.charAt(0).toUpperCase() + product?.product_category?.productCategoryName.slice(1)}
+                        {product?.product_category.productCategoryName.charAt(0).toUpperCase() + product?.product_category?.productCategoryName?.slice(1)}
                       </h4>
                     </Link>
                   )}
@@ -186,7 +186,7 @@ export default function Cards(props) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xl font-semibold text-gray-900">{formatter.format(product?.price)}</span>
-                  {user?.role_category.roleName !== "admin" && (
+                  {user?.role_category?.roleName !== "admin" && (
                     <Button
                       type="button"
                       onClick={(e) => {

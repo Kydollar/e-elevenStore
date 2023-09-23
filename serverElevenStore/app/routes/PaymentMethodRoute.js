@@ -1,12 +1,5 @@
 import express from "express";
-import {
-	getPaymentMethod,
-	getByUuid,
-	addPaymentMethod,
-	updatePaymentMethod,
-	deletePaymentMethod,
-	getByValuePayment,
-} from "../controllers/PaymentMethod.js";
+import { getPaymentMethod, getByUuid, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, getByValuePayment } from "../controllers/PaymentMethod.js";
 import { verifyUser } from "../middleware/AuthUser.js";
 
 const router = express.Router();
@@ -24,7 +17,7 @@ router.get("/payment-methods/value-payment/:valuePayment", verifyUser, getByValu
 router.post("/payment-methods", verifyUser, addPaymentMethod);
 
 // Update a payment method
-router.put("/payment-methods/:uuid", verifyUser, updatePaymentMethod);
+router.patch("/payment-methods/:uuid", verifyUser, updatePaymentMethod);
 
 // Delete a payment method
 router.delete("/payment-methods/:uuid", verifyUser, deletePaymentMethod);
