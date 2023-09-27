@@ -28,7 +28,7 @@ const apiRoute = "/es-api";
 const sessionStore = SequelizeStore(session.Store);
 
 const store = new sessionStore({
-	db: db,
+  db: db,
 });
 
 // (async () => {
@@ -36,22 +36,22 @@ const store = new sessionStore({
 // })();
 
 app.use(
-	session({
-		secret: process.env.SESS_SECRET,
-		resave: false,
-		saveUninitialized: true,
-		store: store,
-		cookie: {
-			secure: "auto",
-		},
-	})
+  session({
+    secret: process.env.SESS_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: store,
+    cookie: {
+      secure: "auto",
+    },
+  })
 );
 
 app.use(
-	cors({
-		credentials: true,
-		origin: ["http://localhost:3000", "http://localhost:3001"],
-	})
+  cors({
+    credentials: true,
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+  })
 );
 
 app.use(express.json());
@@ -71,19 +71,19 @@ app.use(apiRoute, AddressRoute);
 app.use(apiRoute, NodemailerRoute);
 
 app.use(
-	"/api",
-	createProxyMiddleware({
-		target: "https://api.rajaongkir.com",
-		changeOrigin: true,
-		headers: {
-			"Content-Type": "application/json",
-			key: "a3d20f99ea0ac3cdc859eb7fabae576d", // Ganti dengan API key RajaOngkir Anda
-		},
-	})
+  "/api",
+  createProxyMiddleware({
+    target: "https://api.rajaongkir.com",
+    changeOrigin: true,
+    headers: {
+      "Content-Type": "application/json",
+      key: "a3d20f99ea0ac3cdc859eb7fabae576d", // Ganti dengan API key RajaOngkir Anda
+    },
+  })
 );
 
 // store.sync();
 
 app.listen(port, () => {
-	console.log(`Server telah dijalankan... = http://localhost:${port}${apiRoute}`);
+  console.log(`Server telah dijalankan... = http://localhost:${port}${apiRoute}`);
 });

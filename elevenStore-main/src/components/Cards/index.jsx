@@ -128,7 +128,7 @@ export default function Cards(props) {
                         <h4 className="text-md font-normal tracking-tight text-gray-500">Stok&nbsp;:&nbsp;</h4>
                         <span className="bg-blue-100 text-blue-800 text-xs font-medium py-1 px-2 rounded">{product?.stock}</span>
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <span className="text-xl font-semibold text-gray-900">{formatter.format(product?.price)}</span>
                         {user?.role_category?.roleName !== "admin" && (
                           <Button
@@ -184,7 +184,7 @@ export default function Cards(props) {
                   <h4 className="text-md font-normal tracking-tight text-gray-500">Stok&nbsp;:&nbsp;</h4>
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium py-1 px-2 rounded">{product?.stock}</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span className="text-xl font-semibold text-gray-900">{formatter.format(product?.price)}</span>
                   {user?.role_category?.roleName !== "admin" && (
                     <Button
