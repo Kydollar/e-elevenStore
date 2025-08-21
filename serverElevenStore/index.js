@@ -73,11 +73,11 @@ app.use(apiRoute, NodemailerRoute);
 app.use(
   "/api",
   createProxyMiddleware({
-    target: "https://api.rajaongkir.com",
+    target: process.env.API_RAJAONGKIR,
     changeOrigin: true,
-    headers: {
-      "Content-Type": "application/json",
-      key: "a3d20f99ea0ac3cdc859eb7fabae576d", // Ganti dengan API key RajaOngkir Anda
+    onProxyReq: (proxyReq, req) => {
+      // Jangan set Content-Type di sini, biarkan dari frontend
+      proxyReq.setHeader("key", process.env.KEY_RAJAONGKIR);
     },
   })
 );

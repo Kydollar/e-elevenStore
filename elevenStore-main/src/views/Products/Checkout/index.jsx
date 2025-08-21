@@ -79,30 +79,41 @@ export default function Checkout() {
       const courier = selectedCourier; // Use the selected courier
 
       try {
+        const params = new URLSearchParams();
+        params.append("origin", origin);
+        params.append("destination", destination);
+        params.append("weight", weight);
+        params.append("courier", courier);
+        params.append("price", "lowest"); // optional
+
         const response = await axios.post(
-          `${process.env.REACT_APP_HOST_API}/api/starter/cost`,
-          {
-            origin,
-            destination,
-            weight,
-            courier,
-          },
+          `${process.env.REACT_APP_HOST_API}/api/v1/calculate/district/domestic-cost`,
+          params,
           {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         );
-        const results = response.data.rajaongkir.results;
-        if (results.length > 0) {
-          const shippingCost = results[0].costs[0].cost[0].value;
+
+        console.log("response", response.data);
+
+        // Sesuaikan parsing data baru
+        const results = response.data.data; // sekarang array langsung
+        if (results && results.length > 0) {
+          // Ambil ongkir service pertama (misal REG)
+          const shippingCost = results[0].cost;
           setShippingCost(shippingCost);
+        } else {
+          setShippingCost(null);
         }
       } catch (error) {
         console.error(error);
+        setShippingCost(null);
       }
     };
-    fetchShippingCost(); // Load shipping cost when selectedCourier or shippingAddress changes
+
+    fetchShippingCost();
   }, [selectedCourier, shippingAddress]);
 
   const handleCourierChange = (e) => {

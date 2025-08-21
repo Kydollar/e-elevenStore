@@ -135,8 +135,6 @@ const Layout = () => {
 				<Drawer variant="permanent" open={open}>
 					<DrawerHeader className="bg-gray-100">
 						<div className="flex w-full pl-3">
-							{/* <img src={Logo} alt="logo" className="bg-blue-500 mr-6 w-4 h-4" />
-							<Typography>{scrollNav ? "BSI" : "Brantas"}</Typography> */}
 							ELEVEN STORE
 						</div>
 						<IconButton onClick={handleDrawerClose}>

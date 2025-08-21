@@ -5,7 +5,7 @@ Content-Type: application/json
 # {
 #     "username": "admin",
 #     "name": "admin",
-#     "email": "admin@brantassecure.co.id",
+#     "email": "admin@gmail.com",
 #     "password": "admin123",
 #     "confPassword": "admin123",
 #     "role": "admin"
@@ -13,7 +13,7 @@ Content-Type: application/json
 {
     "username": "kydollar",
     "name": "Rizky Widodo",
-    "email": "rizky@brantassecure.co.id",
+    "email": "rizky@gmail.com",
     "password": "kydo123",
     "confPassword": "kydo123",
     "role": "developer"
@@ -36,7 +36,7 @@ Content-Type: application/json
 {
     "username": "admin",
     "name": "admin",
-    "email": "admin@brantassecure.co.id",
+    "email": "admin@gmail.com",
     "password": "admin",
     "confPassword": "admin",
     "role": "admin"
@@ -52,7 +52,7 @@ POST http://localhost:5000/bsi-api/login
 Content-Type: application/json
 
 {
-    "email": "rizky@brantassecure.co.id",
+    "email": "rizky@gmail.com",
     "password": "kydo123"
 }
 
@@ -62,7 +62,7 @@ POST http://localhost:5000/bsi-api/login
 Content-Type: application/json
 
 {
-    "email": "admin@brantassecure.co.id",
+    "email": "admin@gmail.com",
     "password": "admin123"
 }
 

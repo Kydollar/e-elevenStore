@@ -214,18 +214,25 @@ const BillingHistory = () => {
 	}, [combinedData, clickInvoice]);
 
 	useEffect(() => {
-		const fetchDefaultSelectedFile = async () => {
-			if (lastCombinedData && lastCombinedData.invoice) {
-				const invoice = lastCombinedData.invoice;
-				const response = await axios.get(
-					`${process.env.REACT_APP_MY_API}/proof-of-payment/invoice/${invoice}`
-				);
-				const proofOfPayment = response.data;
-				setValueFile(proofOfPayment);
+	const fetchDefaultSelectedFile = async () => {
+		if (lastCombinedData?.invoice) {
+		try {
+			const invoice = lastCombinedData.invoice;
+			const response = await axios.get(
+			`${process.env.REACT_APP_MY_API}/proof-of-payment/invoice/${invoice}`
+			);
+			setValueFile(response.data);
+		} catch (error) {
+			if (error.response?.status === 404) {
+			// Tidak ada file, set ke null
+			setValueFile(null);
+			} else {
+			console.error(error);
 			}
-		};
-
-		fetchDefaultSelectedFile();
+		}
+		}
+	};
+	fetchDefaultSelectedFile();
 	}, [lastCombinedData]);
 
 	useEffect(() => {

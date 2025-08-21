@@ -49,18 +49,21 @@ function AddAddress() {
 	}, []);
 
 	useEffect(() => {
-		const selectedCityData = cities.find((city) => city.city_id === selectedCity);
+		const selectedCityData = cities.find((city) => String(city.id) === String(selectedCity));
 		if (selectedCityData) {
-			const postalCode = selectedCityData.postal_code;
+			const postalCode = (selectedCityData.postal_code ?? selectedCityData.postalCode ?? selectedCityData.postal) || null;
 			setPostalCode(postalCode);
+		} else {
+			setPostalCode(null);
 		}
 	}, [selectedCity, cities]);
 
 	const fetchProvinces = () => {
 		axios
-			.get(`${process.env.REACT_APP_HOST_API}/api/starter/province`)
+			.get(`${process.env.REACT_APP_HOST_API}/api/v1/destination/province`)
 			.then((response) => {
-				setProvinces(response.data.rajaongkir.results);
+				console.log("response province", response);
+				setProvinces(response.data.data || []);
 			})
 			.catch((error) => {
 				console.error(error);
@@ -69,10 +72,12 @@ function AddAddress() {
 
 	const fetchCities = (provinceId) => {
 		axios
-			.get(`${process.env.REACT_APP_HOST_API}/api/starter/city?province=${provinceId}`)
+			.get(`${process.env.REACT_APP_HOST_API}/api/v1/destination/city/${provinceId}`)
 			.then((response) => {
-				const citiesData = response.data.rajaongkir.results;
-				setCities(citiesData);
+				const citiesData = response.data.data;
+				console.log("response city", response);
+
+				setCities(citiesData || []);
 			})
 			.catch((error) => {
 				console.error(error);
@@ -92,7 +97,7 @@ function AddAddress() {
 				phoneNumber: parseInt(data.phoneNumber),
 				province_id: selectedProvince,
 				city_id: selectedCity,
-				postalCode: postalCode,
+				postalCode: postalCode ?? 17530,
 				detailAddress: data.detailAddress,
 				detailLainnya: data.detailLainnya,
 			};
@@ -201,8 +206,8 @@ function AddAddress() {
 								>
 									{!provinces && <MenuItem value={"loading"}>Loading...</MenuItem>}
 									{provinces.map((province, idx) => (
-										<MenuItem key={province.province + idx} value={province.province_id}>
-											{province.province.charAt(0).toUpperCase() + province.province.slice(1)}
+										<MenuItem key={province.id + idx} value={province.id}>
+											{(province.name || "").charAt(0).toUpperCase() + (province.name || "").slice(1)}
 										</MenuItem>
 									))}
 								</TextField>
@@ -226,8 +231,8 @@ function AddAddress() {
 								>
 									{!cities && <MenuItem value={"loading"}>Loading...</MenuItem>}
 									{cities.map((city, idx) => (
-										<MenuItem key={city.city_name + idx} value={city.city_id}>
-											{city.city_name.charAt(0).toUpperCase() + city.city_name.slice(1)}
+										<MenuItem key={(city.id || idx) + idx} value={city.id}>
+											{(city.name || "").charAt(0).toUpperCase() + (city.name || "").slice(1)}
 										</MenuItem>
 									))}
 								</TextField>
